@@ -1,0 +1,59 @@
+ArquitecturaComputadoras/
+│
+├── backend/
+│   │
+│   ├── main.cpp                 // Punto de entrada
+│   ├── servidor.cpp             // Configuración de Crow
+│   ├── servidor.h
+│   │
+│   ├── controllers/
+│   │   ├── PipelineController.cpp
+│   │   ├── PipelineController.h
+│   │   ├── RiscController.cpp
+│   │   ├── RiscController.h
+│   │   ├── CiscController.cpp
+│   │   ├── CiscController.h
+│   │   ├── MonocicloController.cpp
+│   │   └── MonocicloController.h
+│   │
+│   ├── models/
+│   │   ├── Pipeline.h
+│   │   ├── Pipeline.cpp
+│   │   ├── Risc.h
+│   │   ├── Risc.cpp
+│   │   ├── Cisc.h
+│   │   ├── Cisc.cpp
+│   │   ├── Monociclo.h
+│   │   └── Monociclo.cpp
+│   │
+│   ├── services/
+│   │   ├── PipelineService.h
+│   │   ├── PipelineService.cpp
+│   │   ├── RiscService.h
+│   │   ├── RiscService.cpp
+│   │   ├── CiscService.h
+│   │   ├── CiscService.cpp
+│   │   ├── MonocicloService.h
+│   │   ├── MonocicloService.cpp
+│   │   ├── ArchivoService.h
+│   │   └── ArchivoService.cpp
+│   │
+│   ├── utils/
+│   │   ├── Json.h
+│   │   ├── Json.cpp
+│   │   ├── Csv.h
+│   │   ├── Csv.cpp
+│   │   ├── Utilidades.h
+│   │   └── Utilidades.cpp
+│   │
+│   └── data/
+│       ├── historial.csv
+│       ├── resultados.csv
+│       └── usuarios.csv
+│
+├── frontend/
+│
+├── assets/
+├── docs/
+├── CMakeLists.txt
+└── README.md
