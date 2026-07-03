@@ -1,4 +1,4 @@
-#include "ComparacionController.h"
+#include "Comparacioncontroller.h"
 #include <iostream>
 #include <iomanip>
 

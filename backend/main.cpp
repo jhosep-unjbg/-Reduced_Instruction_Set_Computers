@@ -1,4 +1,5 @@
 #include <iostream>
+#include "controllers/Pipelineavanzadocontroller.h"
 #include "controllers/Comparacionpipelinecontroller.h"
 #include "controllers/Pipelinecontroller.h"
 #include "controllers/Monociclocontroller.h"
@@ -17,7 +18,7 @@ int main() {
     CiscController ciscController;
     ComparacionController comparacionController;
     ComparacionPipelineController comparacionPipelineController;
-
+    PipelineAvanzadoController pipelineAvanzadoController;
     do {
         cout << "\n===================================\n";
         cout << " ARQUITECTURA DE COMPUTADORAS\n";
@@ -28,6 +29,7 @@ int main() {
         cout << "4. Calcular CISC\n";
         cout << "5. Comparar RISC vs CISC\n";
         cout << "6. Comparacion Pipeline vs Monociclo" << endl;
+        cout << "7. Pipeline Avanzado" << endl;
         cout << "0. Salir\n";
         cout << "Seleccione una opcion: ";
         cin >> opcion;
@@ -55,6 +57,10 @@ int main() {
 
     case 6:
     comparacionPipelineController.ejecutar();
+    break;
+
+    case 7:
+    pipelineAvanzadoController.ejecutar();
     break;
 
             case 0:
