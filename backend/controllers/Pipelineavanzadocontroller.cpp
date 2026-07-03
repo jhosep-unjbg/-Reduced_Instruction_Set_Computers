@@ -1,118 +1,97 @@
 #include "Pipelineavanzadocontroller.h"
-#include "../models/Pipelineavanzado.h"
 #include "../services/PipelineAvanzadoService.h"
 #include <iostream>
-#include <iomanip>
 #include <vector>
 #include <string>
+#include <iomanip>
 
 using namespace std;
 
 void PipelineAvanzadoController::ejecutar() {
+    PipelineAvanzadoService service;
+    vector<InstruccionPipeline> instrucciones;
+
     int n;
-    int opcionForwarding;
-    int opcionPrediccion;
+    char opcionForwarding;
 
-    int riesgosDatos;
-    int riesgosControl;
-    int riesgosEstructurales;
-
-    int penalizacionDatos;
-    int penalizacionControl;
-    int penalizacionEstructural;
-
-    cout << "\n=== PIPELINE AVANZADO ===" << endl;
-
-    cout << "Ingrese numero de instrucciones: ";
+    cout << "\n=== PIPELINE AVANZADO V2 ===\n";
+    cout << "Ingrese cantidad de instrucciones: ";
     cin >> n;
 
-    cout << "Activar Forwarding? (1 = Si, 0 = No): ";
+    cout << "Activar forwarding? (s/n): ";
     cin >> opcionForwarding;
 
-    cout << "Activar Prediccion de Saltos? (1 = Si, 0 = No): ";
-    cin >> opcionPrediccion;
+    bool forwarding = (opcionForwarding == 's' || opcionForwarding == 'S');
 
-    cout << "\n--- RIESGOS ---" << endl;
-    cout << "Ingrese cantidad de riesgos de datos RAW/WAR/WAW: ";
-    cin >> riesgosDatos;
+    for (int i = 0; i < n; i++) {
+        InstruccionPipeline inst;
 
-    cout << "Ingrese cantidad de riesgos de control: ";
-    cin >> riesgosControl;
+        inst.nombre = "I" + to_string(i + 1);
 
-    cout << "Ingrese cantidad de riesgos estructurales: ";
-    cin >> riesgosEstructurales;
+        cout << "\nInstruccion " << inst.nombre << endl;
+        cout << "Operacion (LW, ADD, SUB, MUL, SW, BEQ): ";
+        cin >> inst.op;
 
-    cout << "\n--- PENALIZACIONES ---" << endl;
-    cout << "Penalizacion por riesgo de datos: ";
-    cin >> penalizacionDatos;
+        cout << "Registro destino (si no tiene, escriba -): ";
+        cin >> inst.destino;
 
-    cout << "Penalizacion por riesgo de control: ";
-    cin >> penalizacionControl;
+        cout << "Fuente 1 (si no tiene, escriba -): ";
+        cin >> inst.fuente1;
 
-    cout << "Penalizacion por riesgo estructural: ";
-    cin >> penalizacionEstructural;
+        cout << "Fuente 2 (si no tiene, escriba -): ";
+        cin >> inst.fuente2;
 
-    PipelineAvanzado pipelineAvanzado;
+        if (inst.destino == "-") inst.destino = "";
+        if (inst.fuente1 == "-") inst.fuente1 = "";
+        if (inst.fuente2 == "-") inst.fuente2 = "";
 
-    pipelineAvanzado.setNumeroInstrucciones(n);
-    pipelineAvanzado.setNumeroEtapas(5);
+        instrucciones.push_back(inst);
+    }
 
-    pipelineAvanzado.setForwarding(opcionForwarding == 1);
-    pipelineAvanzado.setPrediccionSaltos(opcionPrediccion == 1);
+    ResultadoPipelineAvanzado resultado = service.simular(instrucciones, forwarding);
 
-    pipelineAvanzado.setRiesgosDatos(riesgosDatos);
-    pipelineAvanzado.setRiesgosControl(riesgosControl);
-    pipelineAvanzado.setRiesgosEstructurales(riesgosEstructurales);
+    cout << "\n=== RESULTADOS PIPELINE AVANZADO ===\n";
+    cout << "Ciclos ideales: " << resultado.ciclosIdeales << endl;
+    cout << "Ciclos reales : " << resultado.ciclosReales << endl;
+    cout << "Stalls        : " << resultado.stalls << endl;
+    cout << "CPI efectivo  : " << fixed << setprecision(2) << resultado.cpi << endl;
+    cout << "Throughput    : " << fixed << setprecision(4) << resultado.throughput << " instr/ciclo\n";
 
-    pipelineAvanzado.setPenalizacionDatos(penalizacionDatos);
-    pipelineAvanzado.setPenalizacionControl(penalizacionControl);
-    pipelineAvanzado.setPenalizacionEstructural(penalizacionEstructural);
+    cout << "\n=== CARTA DE TIEMPOS ===\n";
 
-    PipelineAvanzadoService service;
+    int maxCiclos = 0;
+    for (auto fila : resultado.cartaTiempos) {
+        if ((int)fila.size() > maxCiclos) {
+            maxCiclos = fila.size();
+        }
+    }
 
-    pipelineAvanzado = service.calcular(pipelineAvanzado);
-    pipelineAvanzado = service.generarCartaTiempos(pipelineAvanzado);
-
-    cout << fixed << setprecision(2);
-
-    cout << "\n--- RESULTADOS PIPELINE AVANZADO ---" << endl;
-    cout << "Etapas: IF, ID, EX, MEM, WB" << endl;
-    cout << "Numero de instrucciones: " << pipelineAvanzado.getNumeroInstrucciones() << endl;
-    cout << "Ciclos ideales: " << pipelineAvanzado.getCiclosIdeales() << endl;
-
-    cout << "\n--- STALLS ---" << endl;
-    cout << "Stalls por datos: " << pipelineAvanzado.getStallsDatos() << endl;
-    cout << "Stalls por control: " << pipelineAvanzado.getStallsControl() << endl;
-    cout << "Stalls estructurales: " << pipelineAvanzado.getStallsEstructurales() << endl;
-    cout << "Stalls totales: " << pipelineAvanzado.getStallsTotales() << endl;
-
-    cout << "\n--- RENDIMIENTO ---" << endl;
-    cout << "Ciclos totales: " << pipelineAvanzado.getCiclosTotales() << endl;
-    cout << "CPI efectivo: " << pipelineAvanzado.getCpiEfectivo() << endl;
-    cout << "Throughput: " << pipelineAvanzado.getThroughput() << " instrucciones/ciclo" << endl;
-
-    cout << "\n--- CARTA DE TIEMPOS IDEAL ---" << endl;
-
-    vector<string> instrucciones = pipelineAvanzado.getInstrucciones();
-    vector<vector<string>> carta = pipelineAvanzado.getCartaTiempos();
-
-    int ciclosMostrar = pipelineAvanzado.getCiclosIdeales();
-
-    cout << "\nCiclos -> ";
-    for (int c = 1; c <= ciclosMostrar; c++) {
-        cout << setw(5) << c;
+    cout << setw(12) << "Instr";
+    for (int c = 1; c <= maxCiclos; c++) {
+        cout << setw(8) << ("C" + to_string(c));
     }
     cout << endl;
 
-    for (int i = 0; i < instrucciones.size(); i++) {
-        cout << setw(8) << instrucciones[i] << " ";
-        for (int c = 0; c < ciclosMostrar; c++) {
-            if (c < carta[i].size()) {
-                cout << setw(5) << carta[i][c];
+    for (int i = 0; i < (int)resultado.cartaTiempos.size(); i++) {
+        cout << setw(12) << instrucciones[i].nombre;
+
+        for (int c = 0; c < maxCiclos; c++) {
+            if (c < (int)resultado.cartaTiempos[i].size()) {
+                cout << setw(8) << resultado.cartaTiempos[i][c];
             } else {
-                cout << setw(5) << "-";
+                cout << setw(8) << "-";
             }
         }
+
         cout << endl;
+    }
+
+    cout << "\n=== OBSERVACIONES ===\n";
+    if (resultado.observaciones.empty()) {
+        cout << "No se detectaron riesgos RAW inmediatos.\n";
+    } else {
+        for (string obs : resultado.observaciones) {
+            cout << "- " << obs << endl;
+        }
     }
 }

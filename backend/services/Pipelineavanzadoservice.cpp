@@ -1,93 +1,88 @@
-#include "Pipelineavanzadoservice.h"
-#include <vector>
-#include <string>
+#include "PipelineAvanzadoService.h"
 
-using namespace std;
+bool PipelineAvanzadoService::hayRAW(InstruccionPipeline anterior, InstruccionPipeline actual) {
+    if (anterior.destino == "") return false;
 
-PipelineAvanzado PipelineAvanzadoService::calcular(PipelineAvanzado pipelineAvanzado) {
-    int n = pipelineAvanzado.getNumeroInstrucciones();
-    int k = pipelineAvanzado.getNumeroEtapas();
+    return anterior.destino == actual.fuente1 ||
+           anterior.destino == actual.fuente2;
+}
 
-    int riesgosDatos = pipelineAvanzado.getRiesgosDatos();
-    int riesgosControl = pipelineAvanzado.getRiesgosControl();
-    int riesgosEstructurales = pipelineAvanzado.getRiesgosEstructurales();
-
-    int penalizacionDatos = pipelineAvanzado.getPenalizacionDatos();
-    int penalizacionControl = pipelineAvanzado.getPenalizacionControl();
-    int penalizacionEstructural = pipelineAvanzado.getPenalizacionEstructural();
-
-    bool forwarding = pipelineAvanzado.getForwarding();
-    bool prediccionSaltos = pipelineAvanzado.getPrediccionSaltos();
+int PipelineAvanzadoService::calcularStalls(
+    InstruccionPipeline anterior,
+    InstruccionPipeline actual,
+    bool forwarding
+) {
+    if (!hayRAW(anterior, actual)) return 0;
 
     if (forwarding) {
-        penalizacionDatos = 1;
+        if (anterior.op == "LW") {
+            return 1;
+        }
+        return 0;
     }
 
-    if (prediccionSaltos) {
-        penalizacionControl = 1;
+    return 2;
+}
+
+ResultadoPipelineAvanzado PipelineAvanzadoService::simular(
+    vector<InstruccionPipeline> instrucciones,
+    bool forwarding
+) {
+    ResultadoPipelineAvanzado resultado;
+
+    int n = instrucciones.size();
+    int k = 5;
+    int stallsTotales = 0;
+
+    vector<vector<string>> carta(n);
+
+    for (int i = 0; i < n; i++) {
+        int stallsActuales = 0;
+
+        if (i > 0) {
+            stallsActuales = calcularStalls(
+                instrucciones[i - 1],
+                instrucciones[i],
+                forwarding
+            );
+        }
+
+        stallsTotales += stallsActuales;
+
+        int inicio = i ;
+
+        for (int j = 0; j < inicio; j++) {
+            carta[i].push_back("-");
+        }
+
+        carta[i].push_back("IF");
+        carta[i].push_back("ID");
+
+        for (int s = 0; s < stallsActuales; s++) {
+            carta[i].push_back("STALL");
+        }
+
+        carta[i].push_back("EX");
+        carta[i].push_back("MEM");
+        carta[i].push_back("WB");
+
+        if (stallsActuales > 0) {
+            resultado.observaciones.push_back(
+                "Riesgo RAW detectado en " + instrucciones[i].nombre +
+                ". Se insertaron " + to_string(stallsActuales) + " stall(s)."
+            );
+        }
     }
 
     int ciclosIdeales = k + (n - 1);
+    int ciclosReales = ciclosIdeales + stallsTotales;
 
-    int stallsDatos = riesgosDatos * penalizacionDatos;
-    int stallsControl = riesgosControl * penalizacionControl;
-    int stallsEstructurales = riesgosEstructurales * penalizacionEstructural;
+    resultado.ciclosIdeales = ciclosIdeales;
+    resultado.ciclosReales = ciclosReales;
+    resultado.stalls = stallsTotales;
+    resultado.cpi = (double)ciclosReales / n;
+    resultado.throughput = (double)n / ciclosReales;
+    resultado.cartaTiempos = carta;
 
-    int stallsTotales = stallsDatos + stallsControl + stallsEstructurales;
-    int ciclosTotales = ciclosIdeales + stallsTotales;
-
-    double cpiEfectivo = 0;
-    double throughput = 0;
-
-    if (n > 0) {
-        cpiEfectivo = (double)ciclosTotales / n;
-        throughput = (double)n / ciclosTotales;
-    }
-
-    pipelineAvanzado.setCiclosIdeales(ciclosIdeales);
-    pipelineAvanzado.setStallsDatos(stallsDatos);
-    pipelineAvanzado.setStallsControl(stallsControl);
-    pipelineAvanzado.setStallsEstructurales(stallsEstructurales);
-    pipelineAvanzado.setStallsTotales(stallsTotales);
-    pipelineAvanzado.setCiclosTotales(ciclosTotales);
-    pipelineAvanzado.setCpiEfectivo(cpiEfectivo);
-    pipelineAvanzado.setThroughput(throughput);
-
-    return pipelineAvanzado;
-}
-
-PipelineAvanzado PipelineAvanzadoService::generarCartaTiempos(PipelineAvanzado pipelineAvanzado) {
-    int n = pipelineAvanzado.getNumeroInstrucciones();
-
-    vector<string> etapas;
-    etapas.push_back("IF");
-    etapas.push_back("ID");
-    etapas.push_back("EX");
-    etapas.push_back("MEM");
-    etapas.push_back("WB");
-
-    vector<string> instrucciones;
-    vector<vector<string>> carta;
-
-    for (int i = 0; i < n; i++) {
-        instrucciones.push_back("I" + to_string(i + 1));
-
-        vector<string> fila;
-
-        for (int c = 0; c < i; c++) {
-            fila.push_back("-");
-        }
-
-        for (int e = 0; e < 5; e++) {
-            fila.push_back(etapas[e]);
-        }
-
-        carta.push_back(fila);
-    }
-
-    pipelineAvanzado.setEtapas(etapas);
-    pipelineAvanzado.setInstrucciones(instrucciones);
-    pipelineAvanzado.setCartaTiempos(carta);
-
-    return pipelineAvanzado;
+    return resultado;
 }

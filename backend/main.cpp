@@ -1,5 +1,6 @@
 #include <iostream>
 #include "controllers/Pipelineavanzadocontroller.h"
+#include "controllers/Pipelineavanzadocontroller.h"
 #include "controllers/Comparacionpipelinecontroller.h"
 #include "controllers/Pipelinecontroller.h"
 #include "controllers/Monociclocontroller.h"
