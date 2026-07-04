@@ -42,6 +42,11 @@ bool PipelineAvanzadoService::esLoad(string instruccion) {
     return obtenerOperacion(instruccion) == "LW";
 }
 
+bool PipelineAvanzadoService::esSalto(string instruccion) {
+    string op = obtenerOperacion(instruccion);
+    return op == "BEQ" || op == "BNE" || op == "J";
+}
+
 string PipelineAvanzadoService::obtenerDestino(string instruccion) {
     vector<string> t = separarTokens(instruccion);
 
@@ -127,7 +132,9 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
 
     int k = 5;
     int n = instrucciones.size();
+
     int stalls = 0;
+    int flushes = 0;
     int desplazamientoGlobal = 0;
 
     for (int i = 0; i < n; i++) {
@@ -141,6 +148,7 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
         fila.push_back("ID");
 
         int stallsInstruccion = 0;
+        int flushesInstruccion = 0;
         bool usaForwarding = false;
 
         for (int j = 0; j < i; j++) {
@@ -150,27 +158,58 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
                 if (distancia == 1 && esLoad(instrucciones[j])) {
                     stallsInstruccion = max(stallsInstruccion, 1);
                     usaForwarding = true;
-                    observaciones.push_back("Load-Use Hazard detectado entre I" + to_string(j + 1) + " e I" + to_string(i + 1) + ". Se aplica 1 stall + Forwarding MEM->EX.");
+
+                    observaciones.push_back(
+                        "Load-Use Hazard detectado entre I" +
+                        to_string(j + 1) + " e I" +
+                        to_string(i + 1) +
+                        ". Se aplica 1 stall + Forwarding MEM->EX."
+                    );
                 }
                 else if (distancia == 1) {
                     usaForwarding = true;
-                    observaciones.push_back("RAW detectado entre I" + to_string(j + 1) + " e I" + to_string(i + 1) + ". Se aplica Forwarding EX->EX. 0 stalls.");
+
+                    observaciones.push_back(
+                        "RAW detectado entre I" +
+                        to_string(j + 1) + " e I" +
+                        to_string(i + 1) +
+                        ". Se aplica Forwarding EX->EX. 0 stalls."
+                    );
                 }
                 else if (distancia == 2) {
                     usaForwarding = true;
-                    observaciones.push_back("RAW no inmediato entre I" + to_string(j + 1) + " e I" + to_string(i + 1) + ". Se aplica Forwarding MEM->EX. 0 stalls.");
+
+                    observaciones.push_back(
+                        "RAW no inmediato entre I" +
+                        to_string(j + 1) + " e I" +
+                        to_string(i + 1) +
+                        ". Se aplica Forwarding MEM->EX. 0 stalls."
+                    );
                 }
                 else {
-                    observaciones.push_back("RAW detectado entre I" + to_string(j + 1) + " e I" + to_string(i + 1) + ". El dato ya está disponible en registros. 0 stalls.");
+                    observaciones.push_back(
+                        "RAW detectado entre I" +
+                        to_string(j + 1) + " e I" +
+                        to_string(i + 1) +
+                        ". El dato ya está disponible en registros. 0 stalls."
+                    );
                 }
             }
 
             if (detectarWAR(instrucciones[j], instrucciones[i])) {
-                observaciones.push_back("WAR detectado entre I" + to_string(j + 1) + " e I" + to_string(i + 1) + ".");
+                observaciones.push_back(
+                    "WAR detectado entre I" +
+                    to_string(j + 1) + " e I" +
+                    to_string(i + 1) + "."
+                );
             }
 
             if (detectarWAW(instrucciones[j], instrucciones[i])) {
-                observaciones.push_back("WAW detectado entre I" + to_string(j + 1) + " e I" + to_string(i + 1) + ".");
+                observaciones.push_back(
+                    "WAW detectado entre I" +
+                    to_string(j + 1) + " e I" +
+                    to_string(i + 1) + "."
+                );
             }
         }
 
@@ -183,17 +222,32 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
         }
 
         fila.push_back("EX");
+
+        if (esSalto(instrucciones[i])) {
+            flushesInstruccion = 2;
+
+            fila.push_back("FL");
+            fila.push_back("FL");
+
+            observaciones.push_back(
+                "Riesgo de control detectado en I" +
+                to_string(i + 1) +
+                ". Se aplica Flush de 2 ciclos."
+            );
+        }
+
         fila.push_back("MEM");
         fila.push_back("WB");
 
         stalls += stallsInstruccion;
-        desplazamientoGlobal += stallsInstruccion;
+        flushes += flushesInstruccion;
+        desplazamientoGlobal += stallsInstruccion + flushesInstruccion;
 
         carta.push_back(fila);
     }
 
     int ciclosIdeales = k + (n - 1);
-    int ciclosReales = ciclosIdeales + stalls;
+    int ciclosReales = ciclosIdeales + stalls + flushes;
 
     resultado.setInstrucciones(instrucciones);
     resultado.setCartaTiempos(carta);
@@ -201,6 +255,7 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
     resultado.setCiclosIdeales(ciclosIdeales);
     resultado.setCiclosReales(ciclosReales);
     resultado.setStalls(stalls);
+    resultado.setFlushes(flushes);
 
     if (n > 0) {
         resultado.setCpi((double)ciclosReales / n);

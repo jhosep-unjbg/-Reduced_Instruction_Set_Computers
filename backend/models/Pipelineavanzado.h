@@ -14,6 +14,7 @@ private:
     int ciclosIdeales;
     int ciclosReales;
     int stalls;
+    int flushes;
     double cpi;
     double throughput;
 
@@ -37,6 +38,9 @@ public:
 
     void setStalls(int stalls);
     int getStalls();
+
+    void setFlushes(int flushes);
+    int getFlushes();
 
     void setCpi(double cpi);
     double getCpi();

@@ -1,9 +1,10 @@
-#include "PipelineAvanzado.h"
+#include "Pipelineavanzado.h"
 
 PipelineAvanzado::PipelineAvanzado() {
     ciclosIdeales = 0;
     ciclosReales = 0;
     stalls = 0;
+    flushes = 0;
     cpi = 0.0;
     throughput = 0.0;
 }
@@ -54,6 +55,14 @@ void PipelineAvanzado::setStalls(int stalls) {
 
 int PipelineAvanzado::getStalls() {
     return stalls;
+}
+
+void PipelineAvanzado::setFlushes(int flushes) {
+    this->flushes = flushes;
+}
+
+int PipelineAvanzado::getFlushes() {
+    return flushes;
 }
 
 void PipelineAvanzado::setCpi(double cpi) {

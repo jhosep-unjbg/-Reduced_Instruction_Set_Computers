@@ -17,6 +17,8 @@ private:
     vector<string> obtenerFuentes(string instruccion);
 
     bool esLoad(string instruccion);
+    bool esSalto(string instruccion);
+
     bool detectarRAW(string anterior, string actual);
     bool detectarWAR(string anterior, string actual);
     bool detectarWAW(string anterior, string actual);
