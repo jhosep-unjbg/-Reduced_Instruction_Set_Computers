@@ -1,6 +1,6 @@
-#include "RiscController.h"
+#include "Risccontroller.h"
 #include "../models/Risc.h"
-#include "../services/RiscService.h"
+#include "../services/Riscservice.h"
 #include <iostream>
 
 using namespace std;

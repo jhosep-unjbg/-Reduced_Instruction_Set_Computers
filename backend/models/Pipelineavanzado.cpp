@@ -1,17 +1,73 @@
-#include "Pipelineavanzado.h"
+#include "PipelineAvanzado.h"
 
-void PipelineAvanzado::setInstrucciones(vector<InstruccionPipeline> instrucciones) {
+PipelineAvanzado::PipelineAvanzado() {
+    ciclosIdeales = 0;
+    ciclosReales = 0;
+    stalls = 0;
+    cpi = 0.0;
+    throughput = 0.0;
+}
+
+void PipelineAvanzado::setInstrucciones(vector<string> instrucciones) {
     this->instrucciones = instrucciones;
 }
 
-vector<InstruccionPipeline> PipelineAvanzado::getInstrucciones() {
+vector<string> PipelineAvanzado::getInstrucciones() {
     return instrucciones;
 }
 
-void PipelineAvanzado::setResultado(ResultadoPipelineAvanzado resultado) {
-    this->resultado = resultado;
+void PipelineAvanzado::setCartaTiempos(vector<vector<string>> cartaTiempos) {
+    this->cartaTiempos = cartaTiempos;
 }
 
-ResultadoPipelineAvanzado PipelineAvanzado::getResultado() {
-    return resultado;
+vector<vector<string>> PipelineAvanzado::getCartaTiempos() {
+    return cartaTiempos;
+}
+
+void PipelineAvanzado::setObservaciones(vector<string> observaciones) {
+    this->observaciones = observaciones;
+}
+
+vector<string> PipelineAvanzado::getObservaciones() {
+    return observaciones;
+}
+
+void PipelineAvanzado::setCiclosIdeales(int ciclosIdeales) {
+    this->ciclosIdeales = ciclosIdeales;
+}
+
+int PipelineAvanzado::getCiclosIdeales() {
+    return ciclosIdeales;
+}
+
+void PipelineAvanzado::setCiclosReales(int ciclosReales) {
+    this->ciclosReales = ciclosReales;
+}
+
+int PipelineAvanzado::getCiclosReales() {
+    return ciclosReales;
+}
+
+void PipelineAvanzado::setStalls(int stalls) {
+    this->stalls = stalls;
+}
+
+int PipelineAvanzado::getStalls() {
+    return stalls;
+}
+
+void PipelineAvanzado::setCpi(double cpi) {
+    this->cpi = cpi;
+}
+
+double PipelineAvanzado::getCpi() {
+    return cpi;
+}
+
+void PipelineAvanzado::setThroughput(double throughput) {
+    this->throughput = throughput;
+}
+
+double PipelineAvanzado::getThroughput() {
+    return throughput;
 }

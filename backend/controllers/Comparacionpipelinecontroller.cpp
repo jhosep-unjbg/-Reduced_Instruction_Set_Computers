@@ -1,6 +1,6 @@
-#include "ComparacionPipelineController.h"
-#include "../models/ComparacionPipeline.h"
-#include "../services/ComparacionPipelineService.h"
+#include "Comparacionpipelinecontroller.h"
+#include "../models/Comparacionpipeline.h"
+#include "../services/Comparacionpipelineservice.h"
 #include <iostream>
 #include <iomanip>
 

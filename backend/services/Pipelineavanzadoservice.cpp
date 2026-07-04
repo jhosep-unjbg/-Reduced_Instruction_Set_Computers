@@ -1,88 +1,167 @@
 #include "PipelineAvanzadoService.h"
+#include <sstream>
+#include <algorithm>
 
-bool PipelineAvanzadoService::hayRAW(InstruccionPipeline anterior, InstruccionPipeline actual) {
-    if (anterior.destino == "") return false;
-
-    return anterior.destino == actual.fuente1 ||
-           anterior.destino == actual.fuente2;
+string PipelineAvanzadoService::limpiar(string texto) {
+    for (int i = 0; i < texto.size(); i++) {
+        if (texto[i] == ',' || texto[i] == '(' || texto[i] == ')') {
+            texto[i] = ' ';
+        }
+    }
+    return texto;
 }
 
-int PipelineAvanzadoService::calcularStalls(
-    InstruccionPipeline anterior,
-    InstruccionPipeline actual,
-    bool forwarding
-) {
-    if (!hayRAW(anterior, actual)) return 0;
+vector<string> PipelineAvanzadoService::separarTokens(string instruccion) {
+    vector<string> tokens;
+    string limpia = limpiar(instruccion);
+    stringstream ss(limpia);
+    string token;
 
-    if (forwarding) {
-        if (anterior.op == "LW") {
-            return 1;
-        }
-        return 0;
+    while (ss >> token) {
+        tokens.push_back(token);
     }
 
-    return 2;
+    return tokens;
 }
 
-ResultadoPipelineAvanzado PipelineAvanzadoService::simular(
-    vector<InstruccionPipeline> instrucciones,
-    bool forwarding
-) {
-    ResultadoPipelineAvanzado resultado;
+string PipelineAvanzadoService::obtenerDestino(string instruccion) {
+    vector<string> t = separarTokens(instruccion);
 
-    int n = instrucciones.size();
+    if (t.size() < 2) return "";
+
+    string op = t[0];
+
+    if (op == "SW" || op == "BEQ" || op == "BNE" || op == "J") {
+        return "";
+    }
+
+    return t[1];
+}
+
+vector<string> PipelineAvanzadoService::obtenerFuentes(string instruccion) {
+    vector<string> t = separarTokens(instruccion);
+    vector<string> fuentes;
+
+    if (t.size() == 0) return fuentes;
+
+    string op = t[0];
+
+    if (op == "LW") {
+        if (t.size() >= 4) fuentes.push_back(t[3]);
+    } 
+    else if (op == "SW") {
+        if (t.size() >= 2) fuentes.push_back(t[1]);
+        if (t.size() >= 4) fuentes.push_back(t[3]);
+    } 
+    else if (op == "BEQ" || op == "BNE") {
+        if (t.size() >= 3) {
+            fuentes.push_back(t[1]);
+            fuentes.push_back(t[2]);
+        }
+    } 
+    else if (op != "J") {
+        for (int i = 2; i < t.size(); i++) {
+            fuentes.push_back(t[i]);
+        }
+    }
+
+    return fuentes;
+}
+
+bool PipelineAvanzadoService::detectarRAW(string anterior, string actual) {
+    string destinoAnterior = obtenerDestino(anterior);
+    vector<string> fuentesActual = obtenerFuentes(actual);
+
+    for (string f : fuentesActual) {
+        if (f == destinoAnterior && destinoAnterior != "") {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool PipelineAvanzadoService::detectarWAR(string anterior, string actual) {
+    vector<string> fuentesAnterior = obtenerFuentes(anterior);
+    string destinoActual = obtenerDestino(actual);
+
+    for (string f : fuentesAnterior) {
+        if (f == destinoActual && destinoActual != "") {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool PipelineAvanzadoService::detectarWAW(string anterior, string actual) {
+    string destinoAnterior = obtenerDestino(anterior);
+    string destinoActual = obtenerDestino(actual);
+
+    return destinoAnterior != "" && destinoAnterior == destinoActual;
+}
+
+PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) {
+    PipelineAvanzado resultado;
+
+    vector<vector<string>> carta;
+    vector<string> observaciones;
+
     int k = 5;
-    int stallsTotales = 0;
-
-    vector<vector<string>> carta(n);
+    int n = instrucciones.size();
+    int stalls = 0;
 
     for (int i = 0; i < n; i++) {
-        int stallsActuales = 0;
+        vector<string> fila;
 
-        if (i > 0) {
-            stallsActuales = calcularStalls(
-                instrucciones[i - 1],
-                instrucciones[i],
-                forwarding
-            );
+        for (int j = 0; j < i; j++) {
+            fila.push_back("");
         }
 
-        stallsTotales += stallsActuales;
+        fila.push_back("IF");
+        fila.push_back("ID");
 
-        int inicio = i ;
+        int stallsInstruccion = 0;
 
-        for (int j = 0; j < inicio; j++) {
-            carta[i].push_back("-");
+        for (int j = 0; j < i; j++) {
+            if (detectarRAW(instrucciones[j], instrucciones[i])) {
+                stallsInstruccion += 2;
+                observaciones.push_back("RAW detectado en I" + to_string(i + 1));
+            }
+
+            if (detectarWAR(instrucciones[j], instrucciones[i])) {
+                observaciones.push_back("WAR detectado en I" + to_string(i + 1));
+            }
+
+            if (detectarWAW(instrucciones[j], instrucciones[i])) {
+                observaciones.push_back("WAW detectado en I" + to_string(i + 1));
+            }
         }
 
-        carta[i].push_back("IF");
-        carta[i].push_back("ID");
-
-        for (int s = 0; s < stallsActuales; s++) {
-            carta[i].push_back("STALL");
+        for (int s = 0; s < stallsInstruccion; s++) {
+            fila.push_back("ST");
         }
 
-        carta[i].push_back("EX");
-        carta[i].push_back("MEM");
-        carta[i].push_back("WB");
+        stalls += stallsInstruccion;
 
-        if (stallsActuales > 0) {
-            resultado.observaciones.push_back(
-                "Riesgo RAW detectado en " + instrucciones[i].nombre +
-                ". Se insertaron " + to_string(stallsActuales) + " stall(s)."
-            );
-        }
+        fila.push_back("EX");
+        fila.push_back("MEM");
+        fila.push_back("WB");
+
+        carta.push_back(fila);
     }
 
     int ciclosIdeales = k + (n - 1);
-    int ciclosReales = ciclosIdeales + stallsTotales;
+    int ciclosReales = ciclosIdeales + stalls;
 
-    resultado.ciclosIdeales = ciclosIdeales;
-    resultado.ciclosReales = ciclosReales;
-    resultado.stalls = stallsTotales;
-    resultado.cpi = (double)ciclosReales / n;
-    resultado.throughput = (double)n / ciclosReales;
-    resultado.cartaTiempos = carta;
+    resultado.setInstrucciones(instrucciones);
+    resultado.setCartaTiempos(carta);
+    resultado.setObservaciones(observaciones);
+    resultado.setCiclosIdeales(ciclosIdeales);
+    resultado.setCiclosReales(ciclosReales);
+    resultado.setStalls(stalls);
+    resultado.setCpi((double)ciclosReales / n);
+    resultado.setThroughput((double)n / ciclosReales);
 
     return resultado;
 }

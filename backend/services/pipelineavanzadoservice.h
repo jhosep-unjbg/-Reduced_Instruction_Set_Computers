@@ -1,22 +1,24 @@
-#ifndef PIPELINEAVANZADOSERVICE_H
-#define PIPELINEAVANZADOSERVICE_H
+#ifndef PIPELINE_AVANZADO_SERVICE_H
+#define PIPELINE_AVANZADO_SERVICE_H
 
 #include "../models/PipelineAvanzado.h"
-#include <vector>
 #include <string>
-
+#include <vector>
 using namespace std;
 
 class PipelineAvanzadoService {
-public:
-    ResultadoPipelineAvanzado simular(
-        vector<InstruccionPipeline> instrucciones,
-        bool forwarding
-    );
-
 private:
-    bool hayRAW(InstruccionPipeline anterior, InstruccionPipeline actual);
-    int calcularStalls(InstruccionPipeline anterior, InstruccionPipeline actual, bool forwarding);
+    string limpiar(string texto);
+    vector<string> separarTokens(string instruccion);
+    string obtenerDestino(string instruccion);
+    vector<string> obtenerFuentes(string instruccion);
+
+    bool detectarRAW(string anterior, string actual);
+    bool detectarWAR(string anterior, string actual);
+    bool detectarWAW(string anterior, string actual);
+
+public:
+    PipelineAvanzado simular(vector<string> instrucciones);
 };
 
 #endif

@@ -1,40 +1,48 @@
-#ifndef PIPELINEAVANZADO_H
-#define PIPELINEAVANZADO_H
+#ifndef PIPELINE_AVANZADO_H
+#define PIPELINE_AVANZADO_H
 
 #include <string>
 #include <vector>
-
 using namespace std;
 
-struct InstruccionPipeline {
-    string nombre;
-    string op;
-    string destino;
-    string fuente1;
-    string fuente2;
-};
+class PipelineAvanzado {
+private:
+    vector<string> instrucciones;
+    vector<vector<string>> cartaTiempos;
+    vector<string> observaciones;
 
-struct ResultadoPipelineAvanzado {
     int ciclosIdeales;
     int ciclosReales;
     int stalls;
     double cpi;
     double throughput;
-    vector<vector<string>> cartaTiempos;
-    vector<string> observaciones;
-};
-
-class PipelineAvanzado {
-private:
-    vector<InstruccionPipeline> instrucciones;
-    ResultadoPipelineAvanzado resultado;
 
 public:
-    void setInstrucciones(vector<InstruccionPipeline> instrucciones);
-    vector<InstruccionPipeline> getInstrucciones();
+    PipelineAvanzado();
 
-    void setResultado(ResultadoPipelineAvanzado resultado);
-    ResultadoPipelineAvanzado getResultado();
+    void setInstrucciones(vector<string> instrucciones);
+    vector<string> getInstrucciones();
+
+    void setCartaTiempos(vector<vector<string>> cartaTiempos);
+    vector<vector<string>> getCartaTiempos();
+
+    void setObservaciones(vector<string> observaciones);
+    vector<string> getObservaciones();
+
+    void setCiclosIdeales(int ciclosIdeales);
+    int getCiclosIdeales();
+
+    void setCiclosReales(int ciclosReales);
+    int getCiclosReales();
+
+    void setStalls(int stalls);
+    int getStalls();
+
+    void setCpi(double cpi);
+    double getCpi();
+
+    void setThroughput(double throughput);
+    double getThroughput();
 };
 
 #endif
