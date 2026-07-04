@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Comparación | CPU Simulator</title>
-  <link rel="stylesheet" href="../css/styles.css">
+    <meta charset="UTF-8">
+    <title>Comparación | CPU Simulator</title>
+    <link rel="stylesheet" href="../css/styles.css">
 </head>
 
 <body data-page="comparacion">
@@ -12,183 +13,269 @@
 
 <main class="main">
 
-  <header class="topbar">
-    <div>
-      <h1>Comparación RISC vs CISC</h1>
-      <p>Análisis visual de instrucciones, memoria, complejidad y eficiencia</p>
-    </div>
-    <span class="badge">Análisis</span>
-  </header>
-
-  <section class="stats">
-    <div class="stat-box">
-      <h3>9 vs 6</h3>
-      <p>Instrucciones</p>
-    </div>
-
-    <div class="stat-box">
-      <h3>5 vs 4</h3>
-      <p>Accesos memoria</p>
-    </div>
-
-    <div class="stat-box">
-      <h3>Alta</h3>
-      <p>Eficiencia Pipeline</p>
-    </div>
-
-    <div class="stat-box">
-      <h3>CISC</h3>
-      <p>Código más compacto</p>
-    </div>
-  </section>
-
-  <section class="grid-2">
-
-    <div class="panel">
-      <h2>Arquitectura RISC</h2>
-      <div class="code-box">
-        <div>LI R0, 0x100</div>
-        <div>LW R1, 0(R0)</div>
-        <div>LW R2, 4(R0)</div>
-        <div>LW R3, 8(R0)</div>
-        <div>LW R4, 12(R0)</div>
-        <div>ADD R5, R1, R2</div>
-        <div>SUB R6, R3, R4</div>
-        <div>MUL R7, R5, R6</div>
-        <div>SW R7, 16(R0)</div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2>Arquitectura CISC</h2>
-      <div class="code-box">
-        <div>MOV AX, [0x100]</div>
-        <div>ADD AX, [0x104]</div>
-        <div>MOV BX, [0x108]</div>
-        <div>SUB BX, [0x10C]</div>
-        <div>MUL BX</div>
-        <div>MOV [0x110], AX</div>
-      </div>
-    </div>
-
-  </section>
-
-  <section class="panel">
-    <div class="panel-header">
-      <h2>Gráficos comparativos</h2>
-     <button class="btn-primary" id="btnAnalizarComparacion">
-
-    <div class="charts-grid">
-
-      <div class="chart-card">
-        <h3>Número de instrucciones</h3>
-        <div class="bar-row">
-          <span>RISC</span>
-          <div class="bar-track"><div class="bar-fill" id="barRiscInstr"></div></div>
-          <strong>9</strong>
+    <header class="topbar">
+        <div>
+            <h1>Comparación RISC vs CISC</h1>
+            <p>Análisis visual de instrucciones, memoria, complejidad y eficiencia</p>
         </div>
-        <div class="bar-row">
-          <span>CISC</span>
-          <div class="bar-track"><div class="bar-fill" id="barCiscInstr"></div></div>
-          <strong>6</strong>
+
+        <span class="badge">Análisis</span>
+    </header>
+
+    <!-- KPIs -->
+
+    <section class="stats">
+
+        <div class="stat-box">
+            <h3 id="cmpInstr">9 vs 6</h3>
+            <p>Instrucciones</p>
         </div>
-      </div>
 
-      <div class="chart-card">
-        <h3>Accesos a memoria</h3>
-        <div class="bar-row">
-          <span>RISC</span>
-          <div class="bar-track"><div class="bar-fill" id="barRiscMem"></div></div>
-          <strong>5</strong>
+        <div class="stat-box">
+            <h3 id="cmpMem">5 vs 4</h3>
+            <p>Accesos memoria</p>
         </div>
-        <div class="bar-row">
-          <span>CISC</span>
-          <div class="bar-track"><div class="bar-fill" id="barCiscMem"></div></div>
-          <strong>4</strong>
+
+        <div class="stat-box">
+            <h3 id="cmpPipe">Alta</h3>
+            <p>Eficiencia Pipeline</p>
         </div>
-      </div>
 
-      <div class="chart-card">
-        <h3>Complejidad de hardware</h3>
-        <div class="bar-row">
-          <span>RISC</span>
-          <div class="bar-track"><div class="bar-fill" id="barRiscComp"></div></div>
-          <strong>Baja</strong>
+        <div class="stat-box">
+            <h3 id="cmpCodigo">CISC</h3>
+            <p>Código más compacto</p>
         </div>
-        <div class="bar-row">
-          <span>CISC</span>
-          <div class="bar-track"><div class="bar-fill" id="barCiscComp"></div></div>
-          <strong>Alta</strong>
+
+    </section>
+
+    <!-- CÓDIGOS -->
+
+    <section class="grid-2">
+
+        <div class="panel">
+
+            <h2>Arquitectura RISC</h2>
+
+            <div class="code-box">
+
+                <div>LI R0, 0x100</div>
+                <div>LW R1, 0(R0)</div>
+                <div>LW R2, 4(R0)</div>
+                <div>LW R3, 8(R0)</div>
+                <div>LW R4, 12(R0)</div>
+                <div>ADD R5, R1, R2</div>
+                <div>SUB R6, R3, R4</div>
+                <div>MUL R7, R5, R6</div>
+                <div>SW R7, 16(R0)</div>
+
+            </div>
+
         </div>
-      </div>
 
-      <div class="chart-card">
-        <h3>Compatibilidad con Pipeline</h3>
-        <div class="bar-row">
-          <span>RISC</span>
-          <div class="bar-track"><div class="bar-fill" id="barRiscPipe"></div></div>
-          <strong>Alta</strong>
+        <div class="panel">
+
+            <h2>Arquitectura CISC</h2>
+
+            <div class="code-box">
+
+                <div>MOV AX, [0x100]</div>
+                <div>ADD AX, [0x104]</div>
+                <div>MOV BX, [0x108]</div>
+                <div>SUB BX, [0x10C]</div>
+                <div>MUL BX</div>
+                <div>MOV [0x110], AX</div>
+
+            </div>
+
         </div>
-        <div class="bar-row">
-          <span>CISC</span>
-          <div class="bar-track"><div class="bar-fill" id="barCiscPipe"></div></div>
-          <strong>Media</strong>
+
+    </section>
+
+    <!-- GRÁFICOS -->
+
+    <section class="panel">
+
+        <div class="panel-header">
+
+            <h2>Gráficos comparativos</h2>
+
+            <button class="btn-primary" id="btnAnalizarComparacion">
+                Analizar
+            </button>
+
         </div>
-      </div>
 
-    </div>
-  </section>
+        <div class="charts-grid">
 
-  <section class="panel">
-    <h2>Tabla comparativa</h2>
+            <div class="chart-card">
 
-    <table>
-      <thead>
-        <tr>
-          <th>Criterio</th>
-          <th>RISC</th>
-          <th>CISC</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Formato de instrucciones</td>
-          <td>Fijo y simple</td>
-          <td>Variable y complejo</td>
-        </tr>
-        <tr>
-          <td>Acceso a memoria</td>
-          <td>Solo LW/SW</td>
-          <td>Registro-Memoria</td>
-        </tr>
-        <tr>
-          <td>Operaciones ALU</td>
-          <td>Registro-Registro</td>
-          <td>Puede operar con memoria</td>
-        </tr>
-        <tr>
-          <td>Código</td>
-          <td>Más largo</td>
-          <td>Más compacto</td>
-        </tr>
-        <tr>
-          <td>Pipeline</td>
-          <td>Más eficiente</td>
-          <td>Más difícil de segmentar</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
+                <h3>Número de instrucciones</h3>
 
-  <section class="panel">
-    <h2>Conclusión automática</h2>
+                <div class="bar-row">
+                    <span>RISC</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" id="barRiscInstr"></div>
+                    </div>
+                    <strong id="txtRiscInstr">9</strong>
+                </div>
 
-    <div class="result-card">
-      <p>Resultado del análisis</p>
-      <h3>RISC favorece el pipeline. CISC reduce instrucciones.</h3>
-      <strong>Ambas arquitecturas calculan 100</strong>
-    </div>
-  </section>
+                <div class="bar-row">
+                    <span>CISC</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" id="barCiscInstr"></div>
+                    </div>
+                    <strong id="txtCiscInstr">6</strong>
+                </div>
+
+            </div>
+
+            <div class="chart-card">
+
+                <h3>Accesos memoria</h3>
+
+                <div class="bar-row">
+                    <span>RISC</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" id="barRiscMem"></div>
+                    </div>
+                    <strong id="txtRiscMem">5</strong>
+                </div>
+
+                <div class="bar-row">
+                    <span>CISC</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" id="barCiscMem"></div>
+                    </div>
+                    <strong id="txtCiscMem">4</strong>
+                </div>
+
+            </div>
+
+            <div class="chart-card">
+
+                <h3>Complejidad hardware</h3>
+
+                <div class="bar-row">
+                    <span>RISC</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" id="barRiscComp"></div>
+                    </div>
+                    <strong>Baja</strong>
+                </div>
+
+                <div class="bar-row">
+                    <span>CISC</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" id="barCiscComp"></div>
+                    </div>
+                    <strong>Alta</strong>
+                </div>
+
+            </div>
+
+            <div class="chart-card">
+
+                <h3>Compatibilidad Pipeline</h3>
+
+                <div class="bar-row">
+                    <span>RISC</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" id="barRiscPipe"></div>
+                    </div>
+                    <strong>Alta</strong>
+                </div>
+
+                <div class="bar-row">
+                    <span>CISC</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" id="barCiscPipe"></div>
+                    </div>
+                    <strong>Media</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- TABLA -->
+
+    <section class="panel">
+
+        <h2>Tabla comparativa</h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Criterio</th>
+                    <th>RISC</th>
+                    <th>CISC</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Formato instrucciones</td>
+                    <td>Fijo y simple</td>
+                    <td>Variable y complejo</td>
+                </tr>
+
+                <tr>
+                    <td>Acceso memoria</td>
+                    <td>Solo LW/SW</td>
+                    <td>Registro-Memoria</td>
+                </tr>
+
+                <tr>
+                    <td>Operaciones ALU</td>
+                    <td>Registro-Registro</td>
+                    <td>Registro-Memoria</td>
+                </tr>
+
+                <tr>
+                    <td>Código</td>
+                    <td>Más largo</td>
+                    <td>Más compacto</td>
+                </tr>
+
+                <tr>
+                    <td>Pipeline</td>
+                    <td>Muy eficiente</td>
+                    <td>Moderado</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+    <!-- CONCLUSIÓN -->
+
+    <section class="panel">
+
+        <h2>Conclusión automática</h2>
+
+        <div class="result-card">
+
+            <p>Resultado del análisis</p>
+
+            <h3 id="conclusionComparacion">
+                Esperando comparación...
+            </h3>
+
+            <strong id="resultadoComparacion">
+                Ejecute el análisis.
+            </strong>
+
+        </div>
+
+    </section>
 
 </main>
 

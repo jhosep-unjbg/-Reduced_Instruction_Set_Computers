@@ -21,44 +21,49 @@
   </header>
 
   <section class="stats">
-    <div class="stat-box">
-      <h3 id="riscLoads">4</h3>
-      <p>Loads</p>
-    </div>
+    <div class="stat-box"><h3 id="riscLoads">4</h3><p>Loads</p></div>
+    <div class="stat-box"><h3 id="riscStores">1</h3><p>Stores</p></div>
+    <div class="stat-box"><h3 id="riscAlu">3</h3><p>Operaciones ALU</p></div>
+    <div class="stat-box"><h3 id="riscTotal">9</h3><p>Instrucciones</p></div>
+  </section>
 
-    <div class="stat-box">
-      <h3 id="riscStores">1</h3>
-      <p>Stores</p>
-    </div>
+  <section class="panel">
+    <h2>Datos de entrada</h2>
 
-    <div class="stat-box">
-      <h3 id="riscAlu">3</h3>
-      <p>Operaciones ALU</p>
-    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>A</label>
+        <input type="number" id="inputA_Risc" value="12">
+      </div>
 
-    <div class="stat-box">
-      <h3 id="riscTotal">9</h3>
-      <p>Instrucciones</p>
+      <div class="form-group">
+        <label>B</label>
+        <input type="number" id="inputB_Risc" value="8">
+      </div>
+
+      <div class="form-group">
+        <label>C</label>
+        <input type="number" id="inputC_Risc" value="15">
+      </div>
+
+      <div class="form-group">
+        <label>D</label>
+        <input type="number" id="inputD_Risc" value="10">
+      </div>
     </div>
   </section>
 
   <section class="grid-2">
 
-    <div class="panel-header">
-    <h2>Código ensamblador RISC</h2>
+    <div class="panel">
+      <div class="panel-header">
+        <h2>Código ensamblador RISC</h2>
 
-    <div style="display:flex; gap:10px;">
-
-        <button class="btn-primary" id="btnEjecutarRisc">
-            Ejecutar
-        </button>
-
-        <button class="btn-secondary" id="btnReiniciarRisc">
-            Reiniciar
-        </button>
-
-    </div>
-</div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn-primary" id="btnEjecutarRisc">Ejecutar</button>
+          <button class="btn-secondary" id="btnReiniciarRisc">Reiniciar</button>
+        </div>
+      </div>
 
       <div class="code-box" id="riscCode">
         <div>LI R0, 0x100</div>
@@ -108,25 +113,10 @@
       <h2>ALU</h2>
 
       <div class="alu-display">
-        <div>
-          <span>Operación</span>
-          <strong id="aluOperacion">---</strong>
-        </div>
-
-        <div>
-          <span>Operando A</span>
-          <strong id="aluA">---</strong>
-        </div>
-
-        <div>
-          <span>Operando B</span>
-          <strong id="aluB">---</strong>
-        </div>
-
-        <div>
-          <span>Resultado</span>
-          <strong id="aluResultado">---</strong>
-        </div>
+        <div><span>Operación</span><strong id="aluOperacion">---</strong></div>
+        <div><span>Operando A</span><strong id="aluA">---</strong></div>
+        <div><span>Operando B</span><strong id="aluB">---</strong></div>
+        <div><span>Resultado</span><strong id="aluResultado">---</strong></div>
       </div>
     </div>
 
@@ -159,6 +149,7 @@
   </section>
 
 </main>
+
 <script src="../js/api.js"></script>
 <script src="../js/layout.js"></script>
 <script src="../js/risc.js"></script>
