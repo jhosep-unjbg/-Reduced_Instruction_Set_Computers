@@ -47,6 +47,39 @@ bool PipelineAvanzadoService::esSalto(string instruccion) {
     return op == "BEQ" || op == "BNE" || op == "J";
 }
 
+string PipelineAvanzadoService::obtenerEstadoPredictor(int estado) {
+    if (estado == 0) return "Strong Not Taken";
+    if (estado == 1) return "Weak Not Taken";
+    if (estado == 2) return "Weak Taken";
+    return "Strong Taken";
+}
+
+bool PipelineAvanzadoService::prediceTomado(int estado) {
+    return estado >= 2;
+}
+
+int PipelineAvanzadoService::actualizarEstadoPredictor(int estado, bool tomado) {
+    if (tomado) {
+        if (estado < 3) estado++;
+    } else {
+        if (estado > 0) estado--;
+    }
+
+    return estado;
+}
+
+bool PipelineAvanzadoService::esResultadoTomado(string instruccion) {
+    string op = obtenerOperacion(instruccion);
+
+    if (op == "J") return true;
+
+    if (op == "BEQ" || op == "BNE") {
+        return true;
+    }
+
+    return false;
+}
+
 string PipelineAvanzadoService::obtenerDestino(string instruccion) {
     vector<string> t = separarTokens(instruccion);
 
@@ -129,6 +162,7 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
 
     vector<vector<string>> carta;
     vector<string> observaciones;
+    vector<string> historialPrediccion;
 
     int k = 5;
     int n = instrucciones.size();
@@ -136,6 +170,10 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
     int stalls = 0;
     int flushes = 0;
     int desplazamientoGlobal = 0;
+
+    int estadoPredictor = 2;
+    int aciertosPrediccion = 0;
+    int fallosPrediccion = 0;
 
     for (int i = 0; i < n; i++) {
         vector<string> fila;
@@ -224,15 +262,53 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
         fila.push_back("EX");
 
         if (esSalto(instrucciones[i])) {
-            flushesInstruccion = 2;
+            bool resultadoTomado = esResultadoTomado(instrucciones[i]);
+            bool prediccionTomada = prediceTomado(estadoPredictor);
+            string estadoAntes = obtenerEstadoPredictor(estadoPredictor);
 
-            fila.push_back("FL");
-            fila.push_back("FL");
+            string textoPrediccion = prediccionTomada ? "TOMADO" : "NO TOMADO";
+            string textoResultado = resultadoTomado ? "TOMADO" : "NO TOMADO";
 
-            observaciones.push_back(
-                "Riesgo de control detectado en I" +
-                to_string(i + 1) +
-                ". Se aplica Flush de 2 ciclos."
+            if (prediccionTomada == resultadoTomado) {
+                aciertosPrediccion++;
+
+                historialPrediccion.push_back(
+                    "I" + to_string(i + 1) +
+                    " | Estado: " + estadoAntes +
+                    " | Prediccion: " + textoPrediccion +
+                    " | Resultado: " + textoResultado +
+                    " | ACIERTO"
+                );
+
+                observaciones.push_back(
+                    "Salto en I" + to_string(i + 1) +
+                    " predicho correctamente. No se aplica Flush."
+                );
+            } else {
+                fallosPrediccion++;
+                flushesInstruccion = 2;
+
+                fila.push_back("FL");
+                fila.push_back("FL");
+
+                historialPrediccion.push_back(
+                    "I" + to_string(i + 1) +
+                    " | Estado: " + estadoAntes +
+                    " | Prediccion: " + textoPrediccion +
+                    " | Resultado: " + textoResultado +
+                    " | FALLO"
+                );
+
+                observaciones.push_back(
+                    "Fallo de prediccion en I" +
+                    to_string(i + 1) +
+                    ". Se aplica Flush de 2 ciclos."
+                );
+            }
+
+            estadoPredictor = actualizarEstadoPredictor(
+                estadoPredictor,
+                resultadoTomado
             );
         }
 
@@ -256,6 +332,20 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
     resultado.setCiclosReales(ciclosReales);
     resultado.setStalls(stalls);
     resultado.setFlushes(flushes);
+    resultado.setAciertosPrediccion(aciertosPrediccion);
+    resultado.setFallosPrediccion(fallosPrediccion);
+
+    int totalPredicciones = aciertosPrediccion + fallosPrediccion;
+
+    if (totalPredicciones > 0) {
+        resultado.setPrecisionPrediccion(
+            ((double)aciertosPrediccion / totalPredicciones) * 100
+        );
+    } else {
+        resultado.setPrecisionPrediccion(0.0);
+    }
+
+    resultado.setHistorialPrediccion(historialPrediccion);
 
     if (n > 0) {
         resultado.setCpi((double)ciclosReales / n);

@@ -51,6 +51,31 @@ void PipelineAvanzadoController::ejecutar() {
     cout << "Throughput     : "
          << resultado.getThroughput()
          << " instr/ciclo" << endl;
+    cout << "\n====== PREDICTOR DE SALTOS ======\n";
+
+    cout << "Aciertos       : "
+     << resultado.getAciertosPrediccion() << endl;
+
+    cout << "Fallos         : "
+     << resultado.getFallosPrediccion() << endl;
+
+    cout << fixed << setprecision(2);
+
+    cout << "Precision      : "
+     << resultado.getPrecisionPrediccion()
+     << " %" << endl;
+
+vector<string> historial =
+    resultado.getHistorialPrediccion();
+
+    if (!historial.empty()) {
+
+    cout << "\nHistorial:\n";
+
+    for (string h : historial) {
+        cout << "- " << h << endl;
+    }
+}
 
     cout << "\n=========== CARTA DE TIEMPOS ===========\n";
 

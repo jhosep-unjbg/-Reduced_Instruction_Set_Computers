@@ -7,6 +7,9 @@ PipelineAvanzado::PipelineAvanzado() {
     flushes = 0;
     cpi = 0.0;
     throughput = 0.0;
+    aciertosPrediccion = 0;
+    fallosPrediccion = 0;
+    precisionPrediccion = 0.0;
 }
 
 void PipelineAvanzado::setInstrucciones(vector<string> instrucciones) {
@@ -79,4 +82,35 @@ void PipelineAvanzado::setThroughput(double throughput) {
 
 double PipelineAvanzado::getThroughput() {
     return throughput;
+}
+void PipelineAvanzado::setAciertosPrediccion(int aciertos) {
+    this->aciertosPrediccion = aciertos;
+}
+
+int PipelineAvanzado::getAciertosPrediccion() {
+    return aciertosPrediccion;
+}
+
+void PipelineAvanzado::setFallosPrediccion(int fallos) {
+    this->fallosPrediccion = fallos;
+}
+
+int PipelineAvanzado::getFallosPrediccion() {
+    return fallosPrediccion;
+}
+
+void PipelineAvanzado::setPrecisionPrediccion(double precision) {
+    this->precisionPrediccion = precision;
+}
+
+double PipelineAvanzado::getPrecisionPrediccion() {
+    return precisionPrediccion;
+}
+
+void PipelineAvanzado::setHistorialPrediccion(vector<string> historial) {
+    this->historialPrediccion = historial;
+}
+
+vector<string> PipelineAvanzado::getHistorialPrediccion() {
+    return historialPrediccion;
 }

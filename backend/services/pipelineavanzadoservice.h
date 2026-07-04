@@ -23,6 +23,11 @@ private:
     bool detectarWAR(string anterior, string actual);
     bool detectarWAW(string anterior, string actual);
 
+    string obtenerEstadoPredictor(int estado);
+    bool prediceTomado(int estado);
+    int actualizarEstadoPredictor(int estado, bool tomado);
+    bool esResultadoTomado(string instruccion); 
+
 public:
     PipelineAvanzado simular(vector<string> instrucciones);
 };

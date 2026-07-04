@@ -10,13 +10,17 @@ private:
     vector<string> instrucciones;
     vector<vector<string>> cartaTiempos;
     vector<string> observaciones;
-
+    vector<string> historialPrediccion;
     int ciclosIdeales;
     int ciclosReales;
     int stalls;
     int flushes;
     double cpi;
     double throughput;
+    int aciertosPrediccion;
+    int fallosPrediccion;
+    double precisionPrediccion;
+   
 
 public:
     PipelineAvanzado();
@@ -29,6 +33,18 @@ public:
 
     void setObservaciones(vector<string> observaciones);
     vector<string> getObservaciones();
+
+    void setAciertosPrediccion(int aciertos);
+    int getAciertosPrediccion();
+
+    void setFallosPrediccion(int fallos);
+    int getFallosPrediccion();
+
+    void setPrecisionPrediccion(double precision);
+    double getPrecisionPrediccion();
+
+    void setHistorialPrediccion(vector<string> historial);
+    vector<string> getHistorialPrediccion();
 
     void setCiclosIdeales(int ciclosIdeales);
     int getCiclosIdeales();
