@@ -1,5 +1,6 @@
-#include "PipelineGanttController.h"
+#include "Pipelineganttcontroller.h"
 #include "../services/PipelineGanttService.h"
+#include "../services/Archivoservice.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -8,6 +9,7 @@ using namespace std;
 
 void PipelineGanttController::ejecutar() {
     PipelineGanttService service;
+    ArchivoService archivo;
     vector<string> instrucciones;
 
     int n;
@@ -27,4 +29,11 @@ void PipelineGanttController::ejecutar() {
     vector<PipelineGantt> gantt = service.generarGantt(instrucciones);
 
     service.mostrarGantt(gantt);
+
+    archivo.guardarGanttCSV("data/gantt_pipeline.csv", gantt);
+    archivo.guardarGanttJSON("data/gantt_pipeline.json", gantt);
+
+    cout << "\nExportacion finalizada:\n";
+    cout << "- data/gantt_pipeline.csv\n";
+    cout << "- data/gantt_pipeline.json\n";
 }
