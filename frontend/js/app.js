@@ -295,3 +295,172 @@ function reiniciarRisc() {
 }
 
 document.addEventListener("DOMContentLoaded", cargarModuloRisc);
+// ===============================
+// MÓDULO CISC VISUAL
+// ===============================
+
+const registrosCisc = {
+  AX: 0,
+  BX: 0,
+  CX: 0,
+  DX: 0
+};
+
+const memoriaCisc = {
+  "0x100": { variable: "A", valor: 12 },
+  "0x104": { variable: "B", valor: 8 },
+  "0x108": { variable: "C", valor: 15 },
+  "0x10C": { variable: "D", valor: 10 },
+  "0x110": { variable: "Resultado", valor: "Pendiente" }
+};
+
+const instruccionesCisc = [
+  "MOV AX, [0x100]",
+  "ADD AX, [0x104]",
+  "MOV BX, [0x108]",
+  "SUB BX, [0x10C]",
+  "MUL BX",
+  "MOV [0x110], AX"
+];
+
+function cargarModuloCisc() {
+  if (document.body.dataset.page !== "cisc") return;
+
+  pintarRegistrosCisc();
+  pintarMemoriaCisc();
+}
+
+function pintarRegistrosCisc() {
+  const tabla = document.getElementById("tablaRegistrosCisc");
+  if (!tabla) return;
+
+  tabla.innerHTML = "";
+
+  Object.entries(registrosCisc).forEach(([registro, valor]) => {
+    tabla.innerHTML += `
+      <tr>
+        <td>${registro}</td>
+        <td>${valor}</td>
+      </tr>
+    `;
+  });
+}
+
+function pintarMemoriaCisc() {
+  const tabla = document.getElementById("tablaMemoriaCisc");
+  if (!tabla) return;
+
+  tabla.innerHTML = "";
+
+  Object.entries(memoriaCisc).forEach(([direccion, dato]) => {
+    tabla.innerHTML += `
+      <tr>
+        <td>${direccion}</td>
+        <td>${dato.variable}</td>
+        <td>${dato.valor}</td>
+      </tr>
+    `;
+  });
+}
+
+function agregarHistorialCisc(paso, instruccion, accion, resultado) {
+  const historial = document.getElementById("historialCisc");
+  if (!historial) return;
+
+  historial.innerHTML += `
+    <tr>
+      <td>${paso}</td>
+      <td>${instruccion}</td>
+      <td>${accion}</td>
+      <td>${resultado}</td>
+    </tr>
+  `;
+}
+
+function actualizarUnidadCisc(operacion, a, b, resultado) {
+  document.getElementById("ciscOperacion").textContent = operacion;
+  document.getElementById("ciscA").textContent = a;
+  document.getElementById("ciscB").textContent = b;
+  document.getElementById("ciscResultadoAlu").textContent = resultado;
+}
+
+function marcarLineaCisc(indice) {
+  const lineas = document.querySelectorAll("#ciscCode div");
+
+  lineas.forEach(linea => linea.classList.remove("active-line"));
+
+  if (lineas[indice]) {
+    lineas[indice].classList.add("active-line");
+  }
+}
+
+function ejecutarCisc() {
+  if (document.body.dataset.page !== "cisc") return;
+
+  reiniciarCisc();
+
+  let paso = 0;
+
+  const ejecucion = [
+    () => {
+      registrosCisc.AX = memoriaCisc["0x100"].valor;
+      agregarHistorialCisc(++paso, instruccionesCisc[0], "Carga directa memoria-registro", "AX = 12");
+    },
+    () => {
+      const antes = registrosCisc.AX;
+      registrosCisc.AX += memoriaCisc["0x104"].valor;
+      actualizarUnidadCisc("ADD", antes, memoriaCisc["0x104"].valor, registrosCisc.AX);
+      agregarHistorialCisc(++paso, instruccionesCisc[1], "Suma directa con memoria", "AX = 20");
+    },
+    () => {
+      registrosCisc.BX = memoriaCisc["0x108"].valor;
+      agregarHistorialCisc(++paso, instruccionesCisc[2], "Carga directa memoria-registro", "BX = 15");
+    },
+    () => {
+      const antes = registrosCisc.BX;
+      registrosCisc.BX -= memoriaCisc["0x10C"].valor;
+      actualizarUnidadCisc("SUB", antes, memoriaCisc["0x10C"].valor, registrosCisc.BX);
+      agregarHistorialCisc(++paso, instruccionesCisc[3], "Resta directa con memoria", "BX = 5");
+    },
+    () => {
+      const antes = registrosCisc.AX;
+      registrosCisc.AX *= registrosCisc.BX;
+      actualizarUnidadCisc("MUL", antes, registrosCisc.BX, registrosCisc.AX);
+      agregarHistorialCisc(++paso, instruccionesCisc[4], "Multiplicación implícita", "AX = 100");
+    },
+    () => {
+      memoriaCisc["0x110"].valor = registrosCisc.AX;
+      document.getElementById("resultadoCisc").textContent = registrosCisc.AX;
+      agregarHistorialCisc(++paso, instruccionesCisc[5], "Store directo a memoria", "Memoria[0x110] = 100");
+    }
+  ];
+
+  ejecucion.forEach((accion, index) => {
+    setTimeout(() => {
+      marcarLineaCisc(index);
+      accion();
+      pintarRegistrosCisc();
+      pintarMemoriaCisc();
+    }, index * 700);
+  });
+}
+
+function reiniciarCisc() {
+  Object.keys(registrosCisc).forEach(reg => registrosCisc[reg] = 0);
+
+  memoriaCisc["0x100"].valor = 12;
+  memoriaCisc["0x104"].valor = 8;
+  memoriaCisc["0x108"].valor = 15;
+  memoriaCisc["0x10C"].valor = 10;
+  memoriaCisc["0x110"].valor = "Pendiente";
+
+  document.getElementById("historialCisc").innerHTML = "";
+  document.getElementById("resultadoCisc").textContent = "Pendiente";
+
+  actualizarUnidadCisc("---", "---", "---", "---");
+
+  pintarRegistrosCisc();
+  pintarMemoriaCisc();
+}
+
+document.addEventListener("DOMContentLoaded", cargarModuloCisc);

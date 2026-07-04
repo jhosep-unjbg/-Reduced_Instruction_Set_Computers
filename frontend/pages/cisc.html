@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>CISC | CPU Simulator</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body data-page="cisc">
+
+<div id="sidebar-container"></div>
+
+<main class="main">
+
+  <header class="topbar">
+    <div>
+      <h1>Módulo CISC</h1>
+      <p>Simulador visual registro-memoria con instrucciones complejas</p>
+    </div>
+    <span class="badge">CISC</span>
+  </header>
+
+  <section class="stats">
+    <div class="stat-box">
+      <h3 id="ciscMemoria">4</h3>
+      <p>Accesos memoria</p>
+    </div>
+
+    <div class="stat-box">
+      <h3 id="ciscAlu">3</h3>
+      <p>Operaciones ALU</p>
+    </div>
+
+    <div class="stat-box">
+      <h3 id="ciscTotal">6</h3>
+      <p>Instrucciones</p>
+    </div>
+
+    <div class="stat-box">
+      <h3>Compacto</h3>
+      <p>Formato código</p>
+    </div>
+  </section>
+
+  <section class="grid-2">
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2>Código ensamblador CISC</h2>
+        <button class="btn-primary" onclick="ejecutarCisc()">Ejecutar</button>
+      </div>
+
+      <div class="code-box" id="ciscCode">
+        <div>MOV AX, [0x100]</div>
+        <div>ADD AX, [0x104]</div>
+        <div>MOV BX, [0x108]</div>
+        <div>SUB BX, [0x10C]</div>
+        <div>MUL BX</div>
+        <div>MOV [0x110], AX</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Registros principales</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Registro</th>
+            <th>Valor</th>
+          </tr>
+        </thead>
+        <tbody id="tablaRegistrosCisc"></tbody>
+      </table>
+    </div>
+
+  </section>
+
+  <section class="grid-2">
+
+    <div class="panel">
+      <h2>Memoria</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Dirección</th>
+            <th>Variable</th>
+            <th>Valor</th>
+          </tr>
+        </thead>
+        <tbody id="tablaMemoriaCisc"></tbody>
+      </table>
+    </div>
+
+    <div class="panel alu-panel">
+      <h2>Unidad de ejecución</h2>
+
+      <div class="alu-display">
+        <div>
+          <span>Operación</span>
+          <strong id="ciscOperacion">---</strong>
+        </div>
+
+        <div>
+          <span>Operando A</span>
+          <strong id="ciscA">---</strong>
+        </div>
+
+        <div>
+          <span>Operando B</span>
+          <strong id="ciscB">---</strong>
+        </div>
+
+        <div>
+          <span>Resultado</span>
+          <strong id="ciscResultadoAlu">---</strong>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="panel">
+    <h2>Resultado final</h2>
+
+    <div class="result-card">
+      <p>Expresión evaluada</p>
+      <h3>(A + B) × (C - D)</h3>
+      <strong id="resultadoCisc">Pendiente</strong>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Historial de ejecución</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Paso</th>
+          <th>Instrucción</th>
+          <th>Acción</th>
+          <th>Resultado</th>
+        </tr>
+      </thead>
+      <tbody id="historialCisc"></tbody>
+    </table>
+  </section>
+
+</main>
+
+<script src="../js/layout.js"></script>
+<script src="../js/app.js"></script>
+
+</body>
+</html>
