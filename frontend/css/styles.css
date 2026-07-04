@@ -336,3 +336,57 @@ td {
   font-size: 26px;
   margin-top: 12px;
 }
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.brand-icon {
+  width: 46px;
+  height: 46px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  font-weight: 900;
+}
+
+.brand h2 {
+  margin: 0;
+  color: #f8fafc;
+}
+
+.brand p {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar nav a span {
+  width: 24px;
+}
+
+.sidebar-footer {
+  margin-top: 35px;
+  padding: 18px;
+  background: #0f172a;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.sidebar-footer p {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.sidebar-footer strong {
+  color: white;
+}
