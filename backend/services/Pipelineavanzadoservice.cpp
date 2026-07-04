@@ -68,14 +68,31 @@ int PipelineAvanzadoService::actualizarEstadoPredictor(int estado, bool tomado) 
     return estado;
 }
 
+bool PipelineAvanzadoService::tieneResultadoManual(string instruccion) {
+    vector<string> t = separarTokens(instruccion);
+
+    if (t.empty()) return false;
+
+    string ultimo = t[t.size() - 1];
+
+    return ultimo == "T" || ultimo == "N";
+}
+
 bool PipelineAvanzadoService::esResultadoTomado(string instruccion) {
-    string op = obtenerOperacion(instruccion);
+    vector<string> t = separarTokens(instruccion);
+
+    if (t.empty()) return false;
+
+    if (tieneResultadoManual(instruccion)) {
+        string ultimo = t[t.size() - 1];
+        return ultimo == "T";
+    }
+
+    string op = t[0];
 
     if (op == "J") return true;
 
-    if (op == "BEQ" || op == "BNE") {
-        return true;
-    }
+    if (op == "BEQ" || op == "BNE") return true;
 
     return false;
 }
@@ -117,7 +134,11 @@ vector<string> PipelineAvanzadoService::obtenerFuentes(string instruccion) {
     }
     else if (op != "J" && op != "NOP") {
         for (int i = 2; i < t.size(); i++) {
-            fuentes.push_back(t[i]);
+            string posibleFuente = t[i];
+
+            if (posibleFuente != "T" && posibleFuente != "N") {
+                fuentes.push_back(posibleFuente);
+            }
         }
     }
 
@@ -171,7 +192,7 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
     int flushes = 0;
     int desplazamientoGlobal = 0;
 
-    int estadoPredictor = 2;
+    int estadoPredictor = 2; // Weak Taken
     int aciertosPrediccion = 0;
     int fallosPrediccion = 0;
 
@@ -229,7 +250,7 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
                         "RAW detectado entre I" +
                         to_string(j + 1) + " e I" +
                         to_string(i + 1) +
-                        ". El dato ya está disponible en registros. 0 stalls."
+                        ". El dato ya esta disponible en registros. 0 stalls."
                     );
                 }
             }
@@ -264,8 +285,8 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
         if (esSalto(instrucciones[i])) {
             bool resultadoTomado = esResultadoTomado(instrucciones[i]);
             bool prediccionTomada = prediceTomado(estadoPredictor);
-            string estadoAntes = obtenerEstadoPredictor(estadoPredictor);
 
+            string estadoAntes = obtenerEstadoPredictor(estadoPredictor);
             string textoPrediccion = prediccionTomada ? "TOMADO" : "NO TOMADO";
             string textoResultado = resultadoTomado ? "TOMADO" : "NO TOMADO";
 
@@ -328,10 +349,12 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
     resultado.setInstrucciones(instrucciones);
     resultado.setCartaTiempos(carta);
     resultado.setObservaciones(observaciones);
+
     resultado.setCiclosIdeales(ciclosIdeales);
     resultado.setCiclosReales(ciclosReales);
     resultado.setStalls(stalls);
     resultado.setFlushes(flushes);
+
     resultado.setAciertosPrediccion(aciertosPrediccion);
     resultado.setFallosPrediccion(fallosPrediccion);
 

@@ -26,7 +26,9 @@ private:
     string obtenerEstadoPredictor(int estado);
     bool prediceTomado(int estado);
     int actualizarEstadoPredictor(int estado, bool tomado);
-    bool esResultadoTomado(string instruccion); 
+
+    bool tieneResultadoManual(string instruccion);
+    bool esResultadoTomado(string instruccion);
 
 public:
     PipelineAvanzado simular(vector<string> instrucciones);

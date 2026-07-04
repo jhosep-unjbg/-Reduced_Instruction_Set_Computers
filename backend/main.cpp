@@ -1,4 +1,5 @@
 #include <iostream>
+#include "controllers/Pipelineganttcontroller.h"
 #include "controllers/Pipelineavanzadocontroller.h"
 #include "controllers/Comparacionpipelinecontroller.h"
 #include "controllers/Pipelinecontroller.h"
@@ -19,6 +20,7 @@ int main() {
     ComparacionController comparacionController;
     ComparacionPipelineController comparacionPipelineController;
     PipelineAvanzadoController pipelineAvanzadoController;
+    PipelineGanttController pipelineGanttController;
     do {
         cout << "\n===================================\n";
         cout << " ARQUITECTURA DE COMPUTADORAS\n";
@@ -30,6 +32,7 @@ int main() {
         cout << "5. Comparar RISC vs CISC\n";
         cout << "6. Comparacion Pipeline vs Monociclo" << endl;
         cout << "7. Pipeline Avanzado" << endl;
+        cout << "8. Gantt Profesional Pipeline\n";
         cout << "0. Salir\n";
         cout << "Seleccione una opcion: ";
         cin >> opcion;
@@ -61,6 +64,10 @@ int main() {
 
     case 7:
     pipelineAvanzadoController.ejecutar();
+    break;
+
+    case 8:
+    pipelineGanttController.ejecutar();
     break;
 
             case 0:
