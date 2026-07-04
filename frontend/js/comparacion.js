@@ -14,24 +14,15 @@ async function cargarModuloComparacion() {
     return;
   }
 
-  const datosLocales = {
-    risc: {
-      instrucciones: 9,
-      memoria: 5,
-      complejidad: 35,
-      pipeline: 95,
-      resultado: 100
-    },
-    cisc: {
-      instrucciones: 6,
-      memoria: 4,
-      complejidad: 90,
-      pipeline: 65,
-      resultado: 100
-    }
-  };
+  const risc = JSON.parse(localStorage.getItem("resultadoRisc"));
+  const cisc = JSON.parse(localStorage.getItem("resultadoCisc"));
 
-  pintarComparacion(datosLocales);
+  if (!risc || !cisc) {
+    mostrarComparacionVacia();
+    return;
+  }
+
+  pintarComparacion({ risc, cisc });
 }
 
 function pintarComparacion(datos) {
@@ -71,17 +62,11 @@ function pintarComparacion(datos) {
   document.getElementById("barCiscMem").style.width =
     `${(cisc.memoria / maxMem) * 100}%`;
 
-  document.getElementById("barRiscComp").style.width =
-    `${risc.complejidad}%`;
+  document.getElementById("barRiscComp").style.width = `${risc.complejidad}%`;
+  document.getElementById("barCiscComp").style.width = `${cisc.complejidad}%`;
 
-  document.getElementById("barCiscComp").style.width =
-    `${cisc.complejidad}%`;
-
-  document.getElementById("barRiscPipe").style.width =
-    `${risc.pipeline}%`;
-
-  document.getElementById("barCiscPipe").style.width =
-    `${cisc.pipeline}%`;
+  document.getElementById("barRiscPipe").style.width = `${risc.pipeline}%`;
+  document.getElementById("barCiscPipe").style.width = `${cisc.pipeline}%`;
 
   generarConclusionComparacion(risc, cisc);
 }
@@ -95,10 +80,17 @@ function generarConclusionComparacion(risc, cisc) {
       : "Las arquitecturas producen resultados diferentes.";
 
   const reduccion = (
-    ((risc.instrucciones - cisc.instrucciones) / risc.instrucciones) *
-    100
+    ((risc.instrucciones - cisc.instrucciones) / risc.instrucciones) * 100
   ).toFixed(1);
 
   document.getElementById("resultadoComparacion").textContent =
-    `CISC reduce el código en ${reduccion}%, mientras RISC favorece mejor el pipeline.`;
+    `CISC reduce el código en ${reduccion}%, mientras RISC favorece mejor el pipeline. Resultado: ${risc.resultado}`;
+}
+
+function mostrarComparacionVacia() {
+  document.getElementById("conclusionComparacion").textContent =
+    "Primero ejecuta los módulos RISC y CISC.";
+
+  document.getElementById("resultadoComparacion").textContent =
+    "No hay datos suficientes para comparar.";
 }

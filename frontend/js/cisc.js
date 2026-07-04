@@ -119,16 +119,12 @@ function marcarLineaCisc(indice) {
 }
 
 async function ejecutarCisc() {
-  reiniciarCisc();
 
-  const datos = obtenerDatosEntradaCisc();
+    const datos = obtenerDatosEntradaCisc();
 
-  const respuesta = await postData("/cisc/simular", datos);
+    limpiarCisc();
 
-  if (respuesta) {
-    console.log("Respuesta backend CISC:", respuesta);
-  }
-
+    const respuesta = await postData("/cisc/simular", datos);
   let paso = 0;
 
   const ejecucion = [
@@ -161,6 +157,19 @@ async function ejecutarCisc() {
     () => {
       memoriaCisc["0x110"].valor = registrosCisc.AX;
       document.getElementById("resultadoCisc").textContent = registrosCisc.AX;
+
+    localStorage.setItem("resultadoCisc", JSON.stringify({
+    arquitectura: "CISC",
+    instrucciones: 6,
+    memoria: 4,
+    alu: 3,
+    registros: 2,
+    complejidad: 90,
+    pipeline: 65,
+    resultado: registrosCisc.AX
+  }));
+
+
       agregarHistorialCisc(++paso, instruccionesCisc[5], "Store directo a memoria", `Memoria[0x110] = ${registrosCisc.AX}`);
     }
   ];
@@ -175,42 +184,38 @@ async function ejecutarCisc() {
   });
 }
 
-function reiniciarCisc() {
-
-  // Reiniciar datos de entrada
-  document.getElementById("inputA_Cisc").value = 0;
-  document.getElementById("inputB_Cisc").value = 0;
-  document.getElementById("inputC_Cisc").value = 0;
-  document.getElementById("inputD_Cisc").value = 0;
+function limpiarCisc() {
 
   const datos = obtenerDatosEntradaCisc();
 
-  // Reiniciar registros
   Object.keys(registrosCisc).forEach(registro => {
     registrosCisc[registro] = 0;
   });
 
-  // Reiniciar memoria
   memoriaCisc["0x100"].valor = datos.A;
   memoriaCisc["0x104"].valor = datos.B;
   memoriaCisc["0x108"].valor = datos.C;
   memoriaCisc["0x10C"].valor = datos.D;
   memoriaCisc["0x110"].valor = "Pendiente";
 
-  // Limpiar historial
   document.getElementById("historialCisc").innerHTML = "";
-
-  // Limpiar resultado
   document.getElementById("resultadoCisc").textContent = "Pendiente";
 
-  // Limpiar unidad de ejecución
   actualizarUnidadCisc("---", "---", "---", "---");
-
-  // Quitar línea resaltada
   marcarLineaCisc(-1);
 
-  // Actualizar tablas
   pintarRegistrosCisc();
   pintarMemoriaCisc();
+
+}
+
+function reiniciarCisc() {
+
+  document.getElementById("inputA_Cisc").value = 0;
+  document.getElementById("inputB_Cisc").value = 0;
+  document.getElementById("inputC_Cisc").value = 0;
+  document.getElementById("inputD_Cisc").value = 0;
+
+  limpiarCisc();
 
 }

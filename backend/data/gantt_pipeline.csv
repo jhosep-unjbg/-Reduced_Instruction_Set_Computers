@@ -1,3 +1,1 @@
-Instruccion,C1,C2,C3,C4,C5,C6,C7
-"ADD R1,R2,R3",IF,ID,EX,MEM,WB,-,-
-"SUB R4,R1,R5",-,IF,ID,EX,FW,MEM,WB
+

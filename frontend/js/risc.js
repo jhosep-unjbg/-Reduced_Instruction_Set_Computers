@@ -126,9 +126,9 @@ function marcarLineaRisc(indice) {
 }
 
 async function ejecutarRisc() {
-  reiniciarRisc();
-
   const datos = obtenerDatosEntradaRisc();
+
+  limpiarRisc();
 
   const respuesta = await postData("/risc/simular", datos);
 
@@ -191,13 +191,7 @@ async function ejecutarRisc() {
   });
 }
 
-function reiniciarRisc() {
-
-  // Reiniciar inputs a cero
-  document.getElementById("inputA_Risc").value = 0;
-  document.getElementById("inputB_Risc").value = 0;
-  document.getElementById("inputC_Risc").value = 0;
-  document.getElementById("inputD_Risc").value = 0;
+function limpiarRisc() {
 
   const datos = obtenerDatosEntradaRisc();
 
@@ -219,5 +213,16 @@ function reiniciarRisc() {
 
   pintarRegistrosRisc();
   pintarMemoriaRisc();
+
+}
+
+function reiniciarRisc() {
+
+  document.getElementById("inputA_Risc").value = 0;
+  document.getElementById("inputB_Risc").value = 0;
+  document.getElementById("inputC_Risc").value = 0;
+  document.getElementById("inputD_Risc").value = 0;
+
+  limpiarRisc();
 
 }
