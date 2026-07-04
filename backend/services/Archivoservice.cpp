@@ -155,27 +155,100 @@ void ArchivoService::guardarHistorialGantt(
     int forwarding,
     int flush
 ) {
-    bool existe = filesystem::exists("data/historial.csv");
+    string ruta = "data/historial.csv";
 
-    ofstream archivo("data/historial.csv", ios::app);
+    int numero = 1;
+    bool existe = filesystem::exists(ruta);
+
+    if (existe) {
+        ifstream leer(ruta);
+        string linea;
+
+        getline(leer, linea); // Cabecera
+
+        while (getline(leer, linea)) {
+            if (!linea.empty()) {
+                numero++;
+            }
+        }
+
+        leer.close();
+    }
+
+    ofstream archivo(ruta, ios::app);
 
     if (!archivo.is_open()) {
-        cout << "Error al abrir data/historial.csv" << endl;
+        cout << "Error al abrir historial.csv" << endl;
         return;
     }
 
     if (!existe) {
-        archivo << "Modulo,Instrucciones,Ciclos,Stalls,Forwarding,Flush\n";
+        archivo << "N°,Modulo,Instrucciones,Ciclos,Stalls,Forwarding,Flush\n";
     }
 
-    archivo << "Gantt Pipeline,"
+    archivo << numero << ","
+            << "Gantt Pipeline,"
             << instrucciones << ","
             << ciclos << ","
             << stalls << ","
             << forwarding << ","
-            << flush << endl;
+            << flush << "\n";
 
     archivo.close();
 
     cout << "Historial actualizado correctamente.\n";
+}
+void ArchivoService::guardarResultadoPipeline(
+    int instrucciones,
+    int ciclos,
+    int stalls,
+    int forwarding,
+    int flush
+) {
+    ofstream archivo("data/resultado.csv");
+
+    if (!archivo.is_open()) {
+        cout << "Error al crear resultado.csv" << endl;
+        return;
+    }
+
+    archivo << "Modulo,Instrucciones,Ciclos,Stalls,Forwarding,Flush\n";
+
+    archivo << "Pipeline Gantt,"
+            << instrucciones << ","
+            << ciclos << ","
+            << stalls << ","
+            << forwarding << ","
+            << flush << "\n";
+
+    archivo.close();
+
+    cout << "Resultado CSV guardado correctamente.\n";
+}
+void ArchivoService::guardarResultadoPipelineJSON(
+    int instrucciones,
+    int ciclos,
+    int stalls,
+    int forwarding,
+    int flush
+) {
+    ofstream archivo("data/resultado.json");
+
+    if (!archivo.is_open()) {
+        cout << "Error al crear resultado.json" << endl;
+        return;
+    }
+
+    archivo << "{\n";
+    archivo << "  \"modulo\": \"Pipeline Gantt\",\n";
+    archivo << "  \"instrucciones\": " << instrucciones << ",\n";
+    archivo << "  \"ciclos\": " << ciclos << ",\n";
+    archivo << "  \"stalls\": " << stalls << ",\n";
+    archivo << "  \"forwarding\": " << forwarding << ",\n";
+    archivo << "  \"flush\": " << flush << "\n";
+    archivo << "}\n";
+
+    archivo.close();
+
+    cout << "Resultado JSON guardado correctamente.\n";
 }

@@ -1,28 +1,12 @@
 {
    "gantt" : [
       {
-         "instruccion" : "LW R1,0(R2)",
+         "instruccion" : "ADD R1,R2,R3",
          "ciclos" : ["IF","ID","EX","MEM","WB"]
       },
       {
-         "instruccion" : "ADD R3,R1,R4",
-         "ciclos" : ["-","IF","ID","ST","EX","MEM","WB"]
-      },
-      {
-         "instruccion" : "ADD R3,R1,R4",
-         "ciclos" : ["-","-","-","IF","ID","EX","MEM","WB"]
-      },
-      {
-         "instruccion" : "BEQ R5,R0,L1",
-         "ciclos" : ["-","-","-","-","IF","ID","EX","FL","FL","MEM","WB"]
-      },
-      {
-         "instruccion" : "ADD R7,R8,R9",
-         "ciclos" : ["-","-","-","-","-","-","-","IF","ID","EX","MEM","WB"]
-      },
-      {
-         "instruccion" : "J L2",
-         "ciclos" : ["-","-","-","-","-","-","-","-","IF","ID","EX","FL","FL","MEM","WB"]
+         "instruccion" : "SUB R4,R1,R5",
+         "ciclos" : ["-","IF","ID","EX","FW","MEM","WB"]
       }
    ]
 }

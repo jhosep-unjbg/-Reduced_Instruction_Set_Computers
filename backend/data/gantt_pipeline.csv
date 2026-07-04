@@ -1,7 +1,3 @@
-Instruccion,C1,C2,C3,C4,C5,C6,C7,C8,C9,C10,C11,C12,C13,C14,C15
-"LW R1,0(R2)",IF,ID,EX,MEM,WB,-,-,-,-,-,-,-,-,-,-
-"ADD R3,R1,R4",-,IF,ID,ST,EX,MEM,WB,-,-,-,-,-,-,-,-
-"ADD R3,R1,R4",-,-,-,IF,ID,EX,MEM,WB,-,-,-,-,-,-,-
-"BEQ R5,R0,L1",-,-,-,-,IF,ID,EX,FL,FL,MEM,WB,-,-,-,-
-"ADD R7,R8,R9",-,-,-,-,-,-,-,IF,ID,EX,MEM,WB,-,-,-
-"J L2",-,-,-,-,-,-,-,-,IF,ID,EX,FL,FL,MEM,WB
+Instruccion,C1,C2,C3,C4,C5,C6,C7
+"ADD R1,R2,R3",IF,ID,EX,MEM,WB,-,-
+"SUB R4,R1,R5",-,IF,ID,EX,FW,MEM,WB
