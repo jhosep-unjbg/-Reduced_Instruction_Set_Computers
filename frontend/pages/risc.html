@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>RISC | CPU Simulator</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body data-page="risc">
+
+<div id="sidebar-container"></div>
+
+<main class="main">
+
+  <header class="topbar">
+    <div>
+      <h1>Módulo RISC</h1>
+      <p>Simulador visual Load/Store con registros, memoria y ALU</p>
+    </div>
+    <span class="badge">RISC</span>
+  </header>
+
+  <section class="stats">
+    <div class="stat-box">
+      <h3 id="riscLoads">4</h3>
+      <p>Loads</p>
+    </div>
+
+    <div class="stat-box">
+      <h3 id="riscStores">1</h3>
+      <p>Stores</p>
+    </div>
+
+    <div class="stat-box">
+      <h3 id="riscAlu">3</h3>
+      <p>Operaciones ALU</p>
+    </div>
+
+    <div class="stat-box">
+      <h3 id="riscTotal">9</h3>
+      <p>Instrucciones</p>
+    </div>
+  </section>
+
+  <section class="grid-2">
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2>Código ensamblador RISC</h2>
+        <button class="btn-primary" onclick="ejecutarRisc()">Ejecutar</button>
+      </div>
+
+      <div class="code-box" id="riscCode">
+        <div>LI R0, 0x100</div>
+        <div>LW R1, 0(R0)</div>
+        <div>LW R2, 4(R0)</div>
+        <div>LW R3, 8(R0)</div>
+        <div>LW R4, 12(R0)</div>
+        <div>ADD R5, R1, R2</div>
+        <div>SUB R6, R3, R4</div>
+        <div>MUL R7, R5, R6</div>
+        <div>SW R7, 16(R0)</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Banco de registros</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Registro</th>
+            <th>Valor</th>
+          </tr>
+        </thead>
+        <tbody id="tablaRegistrosRisc"></tbody>
+      </table>
+    </div>
+
+  </section>
+
+  <section class="grid-2">
+
+    <div class="panel">
+      <h2>Memoria</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Dirección</th>
+            <th>Variable</th>
+            <th>Valor</th>
+          </tr>
+        </thead>
+        <tbody id="tablaMemoriaRisc"></tbody>
+      </table>
+    </div>
+
+    <div class="panel alu-panel">
+      <h2>ALU</h2>
+
+      <div class="alu-display">
+        <div>
+          <span>Operación</span>
+          <strong id="aluOperacion">---</strong>
+        </div>
+
+        <div>
+          <span>Operando A</span>
+          <strong id="aluA">---</strong>
+        </div>
+
+        <div>
+          <span>Operando B</span>
+          <strong id="aluB">---</strong>
+        </div>
+
+        <div>
+          <span>Resultado</span>
+          <strong id="aluResultado">---</strong>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="panel">
+    <h2>Resultado final</h2>
+
+    <div class="result-card">
+      <p>Expresión evaluada</p>
+      <h3>(A + B) × (C - D)</h3>
+      <strong id="resultadoRisc">Pendiente</strong>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Historial de ejecución</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Paso</th>
+          <th>Instrucción</th>
+          <th>Acción</th>
+          <th>Resultado</th>
+        </tr>
+      </thead>
+      <tbody id="historialRisc"></tbody>
+    </table>
+  </section>
+
+</main>
+
+<script src="../js/layout.js"></script>
+<script src="../js/app.js"></script>
+
+</body>
+</html>
