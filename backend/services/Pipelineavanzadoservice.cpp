@@ -2,12 +2,20 @@
 #include <sstream>
 #include <algorithm>
 
+string PipelineAvanzadoService::convertirMayuscula(string texto) {
+    transform(texto.begin(), texto.end(), texto.begin(), ::toupper);
+    return texto;
+}
+
 string PipelineAvanzadoService::limpiar(string texto) {
+    texto = convertirMayuscula(texto);
+
     for (int i = 0; i < texto.size(); i++) {
         if (texto[i] == ',' || texto[i] == '(' || texto[i] == ')') {
             texto[i] = ' ';
         }
     }
+
     return texto;
 }
 
@@ -24,6 +32,16 @@ vector<string> PipelineAvanzadoService::separarTokens(string instruccion) {
     return tokens;
 }
 
+string PipelineAvanzadoService::obtenerOperacion(string instruccion) {
+    vector<string> t = separarTokens(instruccion);
+    if (t.empty()) return "";
+    return t[0];
+}
+
+bool PipelineAvanzadoService::esLoad(string instruccion) {
+    return obtenerOperacion(instruccion) == "LW";
+}
+
 string PipelineAvanzadoService::obtenerDestino(string instruccion) {
     vector<string> t = separarTokens(instruccion);
 
@@ -31,7 +49,7 @@ string PipelineAvanzadoService::obtenerDestino(string instruccion) {
 
     string op = t[0];
 
-    if (op == "SW" || op == "BEQ" || op == "BNE" || op == "J") {
+    if (op == "SW" || op == "BEQ" || op == "BNE" || op == "J" || op == "NOP") {
         return "";
     }
 
@@ -42,24 +60,24 @@ vector<string> PipelineAvanzadoService::obtenerFuentes(string instruccion) {
     vector<string> t = separarTokens(instruccion);
     vector<string> fuentes;
 
-    if (t.size() == 0) return fuentes;
+    if (t.empty()) return fuentes;
 
     string op = t[0];
 
     if (op == "LW") {
         if (t.size() >= 4) fuentes.push_back(t[3]);
-    } 
+    }
     else if (op == "SW") {
         if (t.size() >= 2) fuentes.push_back(t[1]);
         if (t.size() >= 4) fuentes.push_back(t[3]);
-    } 
+    }
     else if (op == "BEQ" || op == "BNE") {
         if (t.size() >= 3) {
             fuentes.push_back(t[1]);
             fuentes.push_back(t[2]);
         }
-    } 
-    else if (op != "J") {
+    }
+    else if (op != "J" && op != "NOP") {
         for (int i = 2; i < t.size(); i++) {
             fuentes.push_back(t[i]);
         }
@@ -110,11 +128,12 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
     int k = 5;
     int n = instrucciones.size();
     int stalls = 0;
+    int desplazamientoGlobal = 0;
 
     for (int i = 0; i < n; i++) {
         vector<string> fila;
 
-        for (int j = 0; j < i; j++) {
+        for (int j = 0; j < i + desplazamientoGlobal; j++) {
             fila.push_back("");
         }
 
@@ -122,19 +141,36 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
         fila.push_back("ID");
 
         int stallsInstruccion = 0;
+        bool usaForwarding = false;
 
         for (int j = 0; j < i; j++) {
             if (detectarRAW(instrucciones[j], instrucciones[i])) {
-                stallsInstruccion += 2;
-                observaciones.push_back("RAW detectado en I" + to_string(i + 1));
+                int distancia = i - j;
+
+                if (distancia == 1 && esLoad(instrucciones[j])) {
+                    stallsInstruccion = max(stallsInstruccion, 1);
+                    usaForwarding = true;
+                    observaciones.push_back("Load-Use Hazard detectado entre I" + to_string(j + 1) + " e I" + to_string(i + 1) + ". Se aplica 1 stall + Forwarding MEM->EX.");
+                }
+                else if (distancia == 1) {
+                    usaForwarding = true;
+                    observaciones.push_back("RAW detectado entre I" + to_string(j + 1) + " e I" + to_string(i + 1) + ". Se aplica Forwarding EX->EX. 0 stalls.");
+                }
+                else if (distancia == 2) {
+                    usaForwarding = true;
+                    observaciones.push_back("RAW no inmediato entre I" + to_string(j + 1) + " e I" + to_string(i + 1) + ". Se aplica Forwarding MEM->EX. 0 stalls.");
+                }
+                else {
+                    observaciones.push_back("RAW detectado entre I" + to_string(j + 1) + " e I" + to_string(i + 1) + ". El dato ya está disponible en registros. 0 stalls.");
+                }
             }
 
             if (detectarWAR(instrucciones[j], instrucciones[i])) {
-                observaciones.push_back("WAR detectado en I" + to_string(i + 1));
+                observaciones.push_back("WAR detectado entre I" + to_string(j + 1) + " e I" + to_string(i + 1) + ".");
             }
 
             if (detectarWAW(instrucciones[j], instrucciones[i])) {
-                observaciones.push_back("WAW detectado en I" + to_string(i + 1));
+                observaciones.push_back("WAW detectado entre I" + to_string(j + 1) + " e I" + to_string(i + 1) + ".");
             }
         }
 
@@ -142,11 +178,16 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
             fila.push_back("ST");
         }
 
-        stalls += stallsInstruccion;
+        if (usaForwarding) {
+            fila.push_back("FW");
+        }
 
         fila.push_back("EX");
         fila.push_back("MEM");
         fila.push_back("WB");
+
+        stalls += stallsInstruccion;
+        desplazamientoGlobal += stallsInstruccion;
 
         carta.push_back(fila);
     }
@@ -160,8 +201,11 @@ PipelineAvanzado PipelineAvanzadoService::simular(vector<string> instrucciones) 
     resultado.setCiclosIdeales(ciclosIdeales);
     resultado.setCiclosReales(ciclosReales);
     resultado.setStalls(stalls);
-    resultado.setCpi((double)ciclosReales / n);
-    resultado.setThroughput((double)n / ciclosReales);
+
+    if (n > 0) {
+        resultado.setCpi((double)ciclosReales / n);
+        resultado.setThroughput((double)n / ciclosReales);
+    }
 
     return resultado;
 }
