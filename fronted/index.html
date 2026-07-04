@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Simulador CPU</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <aside class="sidebar">
+    <h2>CPU Simulator</h2>
+
+    <nav>
+      <a href="index.html" class="active">Dashboard</a>
+      <a href="pages/pipeline.html">Pipeline</a>
+      <a href="pages/monociclo.html">Monociclo</a>
+      <a href="pages/risc.html">RISC</a>
+      <a href="pages/cisc.html">CISC</a>
+      <a href="pages/comparacion.html">Comparaciones</a>
+      <a href="pages/pipeline_avanzado.html">Pipeline Avanzado</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1>Simulador de Arquitectura de Computadoras</h1>
+        <p>Dashboard general del sistema</p>
+      </div>
+      <span class="badge">Backend listo</span>
+    </header>
+
+    <section class="stats">
+      <div class="stat-box">
+        <h3>6</h3>
+        <p>Módulos activos</p>
+      </div>
+
+      <div class="stat-box">
+        <h3>5</h3>
+        <p>Etapas Pipeline</p>
+      </div>
+
+      <div class="stat-box">
+        <h3>2 bits</h3>
+        <p>Predictor dinámico</p>
+      </div>
+
+      <div class="stat-box">
+        <h3>CSV / JSON</h3>
+        <p>Exportación</p>
+      </div>
+    </section>
+
+    <section class="cards">
+      <div class="card">
+        <h3>Pipeline</h3>
+        <p>Ciclos, tiempo total y speedup.</p>
+        <a href="pages/pipeline.html">Abrir módulo</a>
+      </div>
+
+      <div class="card">
+        <h3>Monociclo</h3>
+        <p>Tipo R, LW, SW, BEQ, frecuencia y eficiencia.</p>
+        <a href="pages/monociclo.html">Abrir módulo</a>
+      </div>
+
+      <div class="card">
+        <h3>RISC</h3>
+        <p>Assembler, loads, stores y ALU.</p>
+        <a href="pages/risc.html">Abrir módulo</a>
+      </div>
+
+      <div class="card">
+        <h3>CISC</h3>
+        <p>Assembler, memoria y operaciones complejas.</p>
+        <a href="pages/cisc.html">Abrir módulo</a>
+      </div>
+
+      <div class="card">
+        <h3>Comparaciones</h3>
+        <p>RISC vs CISC y Pipeline vs Monociclo.</p>
+        <a href="pages/comparacion.html">Abrir módulo</a>
+      </div>
+
+      <div class="card">
+        <h3>Pipeline Avanzado</h3>
+        <p>Hazards, forwarding, flush, predictor y Gantt.</p>
+        <a href="pages/pipeline_avanzado.html">Abrir módulo</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Arquitectura del sistema</h2>
+
+      <div class="architecture">
+        <span>Frontend</span>
+        <span>Controller</span>
+        <span>Service</span>
+        <span>Model</span>
+        <span>ArchivoService</span>
+        <span>CSV / JSON</span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Últimas simulaciones</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Módulo</th>
+            <th>Estado</th>
+            <th>Exportación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Pipeline</td>
+            <td>Completado</td>
+            <td>CSV</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>RISC</td>
+            <td>Completado</td>
+            <td>CSV / JSON</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Pipeline Avanzado</td>
+            <td>Completado</td>
+            <td>CSV / JSON</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
