@@ -30,15 +30,17 @@ const instruccionesRisc = [
 ];
 
 function inicializarRisc() {
-  cargarModuloRisc();
 
-  document
-    .getElementById("btnEjecutarRisc")
-    ?.addEventListener("click", ejecutarRisc);
+    cargarModuloRisc();
 
-  document
-    .getElementById("btnReiniciarRisc")
-    ?.addEventListener("click", reiniciarRisc);
+    document
+        .getElementById("btnEjecutarRisc")
+        ?.addEventListener("click", ejecutarRisc);
+
+    document
+        .getElementById("btnReiniciarRisc")
+        ?.addEventListener("click", reiniciarRisc);
+
 }
 
 function cargarModuloRisc() {
@@ -110,21 +112,25 @@ function actualizarALU(operacion, a, b, resultado) {
 }
 
 function marcarLineaRisc(indice) {
+
   const lineas = document.querySelectorAll("#riscCode div");
 
-  lineas.forEach(linea => linea.classList.remove("active-line"));
+  lineas.forEach(linea => {
+    linea.classList.remove("active-line");
+  });
 
-  if (lineas[indice]) {
+  if (indice >= 0 && indice < lineas.length) {
     lineas[indice].classList.add("active-line");
   }
+
 }
 
 async function ejecutarRisc() {
+  reiniciarRisc();
+
   const datos = obtenerDatosEntradaRisc();
 
   const respuesta = await postData("/risc/simular", datos);
-
-  reiniciarRisc();
 
   if (respuesta) {
     console.log("Respuesta backend RISC:", respuesta);
@@ -186,9 +192,18 @@ async function ejecutarRisc() {
 }
 
 function reiniciarRisc() {
+
+  // Reiniciar inputs a cero
+  document.getElementById("inputA_Risc").value = 0;
+  document.getElementById("inputB_Risc").value = 0;
+  document.getElementById("inputC_Risc").value = 0;
+  document.getElementById("inputD_Risc").value = 0;
+
   const datos = obtenerDatosEntradaRisc();
 
-  Object.keys(registrosRisc).forEach(reg => registrosRisc[reg] = 0);
+  Object.keys(registrosRisc).forEach(registro => {
+    registrosRisc[registro] = 0;
+  });
 
   memoriaRisc["0x100"].valor = datos.A;
   memoriaRisc["0x104"].valor = datos.B;
@@ -200,7 +215,9 @@ function reiniciarRisc() {
   document.getElementById("resultadoRisc").textContent = "Pendiente";
 
   actualizarALU("---", "---", "---", "---");
+  marcarLineaRisc(-1);
 
   pintarRegistrosRisc();
   pintarMemoriaRisc();
+
 }
