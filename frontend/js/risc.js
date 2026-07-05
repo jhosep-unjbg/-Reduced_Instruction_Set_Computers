@@ -130,11 +130,10 @@ async function ejecutarRisc() {
 
   limpiarRisc();
 
-  const respuesta = await postData("/risc/simular", datos);
-
+  const respuesta = await postData("/api/risc", datos);
   if (respuesta) {
-    console.log("Respuesta backend RISC:", respuesta);
-  }
+  console.log("Respuesta backend RISC:", respuesta);
+}
 
   let paso = 0;
 

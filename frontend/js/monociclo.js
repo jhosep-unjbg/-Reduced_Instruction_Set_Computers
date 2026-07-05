@@ -1,12 +1,12 @@
-function inicializarMonociclo() {
-  calcularMonociclo();
+async function inicializarMonociclo() {
+  await calcularMonociclo();
 
   document
     .getElementById("btnCalcularMonociclo")
     ?.addEventListener("click", calcularMonociclo);
 }
 
-function calcularMonociclo() {
+async function calcularMonociclo() {
   const im = Number(document.getElementById("im").value);
   const rfRead = Number(document.getElementById("rfRead").value);
   const alu = Number(document.getElementById("alu").value);
@@ -18,15 +18,27 @@ function calcularMonociclo() {
     return;
   }
 
-  const tipoR = im + rfRead + alu + rfWrite;
-  const lw = im + rfRead + alu + dm + rfWrite;
-  const sw = im + rfRead + alu + dm;
-  const beq = im + rfRead + alu;
+  const resultado = await postData("/api/monociclo", {
+    im,
+    rfRead,
+    alu,
+    dm,
+    rfWrite
+  });
 
-  const periodo = Math.max(tipoR, lw, sw, beq);
-  const frecuenciaMHz = 1000000 / periodo;
-  const slack = periodo - beq;
-  const eficiencia = (beq / periodo) * 100;
+  if (!resultado) {
+    alert("No se pudo conectar con el backend Crow.");
+    return;
+  }
+
+  const tipoR = resultado.tipoR;
+  const lw = resultado.lw;
+  const sw = resultado.sw;
+  const beq = resultado.beq;
+  const periodo = resultado.periodo;
+  const frecuenciaMHz = resultado.frecuenciaMHz;
+  const slack = resultado.slack;
+  const eficiencia = resultado.eficiencia;
 
   document.getElementById("tipoR").textContent = tipoR + " ps";
   document.getElementById("lw").textContent = lw + " ps";
