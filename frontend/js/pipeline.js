@@ -1,5 +1,4 @@
 async function inicializarPipeline() {
-  await calcularPipeline();
 
   document
     .getElementById("btnCalcularPipeline")
