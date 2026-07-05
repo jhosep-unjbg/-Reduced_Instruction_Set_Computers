@@ -13,25 +13,18 @@
 <main class="main">
 
   <header class="topbar">
-
     <div>
-        <h1>Módulo RISC</h1>
-        <p>Simulador visual Load/Store con registros, memoria y ALU</p>
+      <h1>Módulo RISC</h1>
+      <p>Simulador visual Load/Store con registros, memoria y ALU</p>
     </div>
 
     <div style="display:flex;gap:10px;align-items:center;">
-
-        <button
-            class="btn-secondary"
-            onclick="window.location.href='../index.html'">
-             regresar
-        </button>
-
-        <span class="badge">RISC</span>
-
+      <button class="btn-secondary" onclick="window.location.href='../index.html'">
+        regresar
+      </button>
+      <span class="badge">RISC</span>
     </div>
-
-</header>
+  </header>
 
   <section class="stats">
     <div class="stat-box"><h3 id="riscLoads">4</h3><p>Loads</p></div>
@@ -72,17 +65,11 @@
       <div class="panel-header">
         <h2>Código ensamblador RISC</h2>
 
-       <div style="display:flex; gap:10px;">
-
-    <button class="btn-primary" id="btnEjecutarRisc">
-        Ejecutar
-    </button>
-
-    <button class="btn-secondary" id="btnReiniciarRisc">
-        Reiniciar
-    </button>
-
-</div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn-primary" id="btnEjecutarRisc">Ejecutar</button>
+          <button class="btn-secondary" id="btnReiniciarRisc">Reiniciar</button>
+        </div>
+      </div>
 
       <div class="code-box" id="riscCode">
         <div>LI R0, 0x100</div>

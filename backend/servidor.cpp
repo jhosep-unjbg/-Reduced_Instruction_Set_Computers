@@ -165,6 +165,7 @@ CROW_ROUTE(app, "/api/monociclo").methods("POST"_method)
 });
 CROW_ROUTE(app, "/api/risc").methods("POST"_method)
 ([](const crow::request& req) {
+
     auto body = crow::json::load(req.body);
 
     if (!body) {
@@ -182,6 +183,24 @@ CROW_ROUTE(app, "/api/risc").methods("POST"_method)
     RiscService service;
 
     Risc resultado = service.calcular(risc);
+
+    // ===== GUARDAR HISTORIAL =====
+    ArchivoService archivo;
+
+    archivo.guardarHistorialGeneral(
+        "RISC",
+        "A=" + std::to_string(A) +
+        "; B=" + std::to_string(B) +
+        "; C=" + std::to_string(C) +
+        "; D=" + std::to_string(D),
+
+        "Resultado=" + std::to_string(resultado.getResultado()) +
+        "; Instrucciones=" + std::to_string(resultado.getNumeroInstrucciones()) +
+        "; Loads=" + std::to_string(resultado.getLoads()) +
+        "; Stores=" + std::to_string(resultado.getStores()) +
+        "; OperacionesALU=" + std::to_string(resultado.getOperacionesAlu())
+    );
+    // =============================
 
     crow::json::wvalue json;
     json["A"] = A;
