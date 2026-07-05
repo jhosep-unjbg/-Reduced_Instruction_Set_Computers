@@ -72,8 +72,7 @@ function actualizarCantidadInstrucciones() {
 /* =========================================================
    EJECUTAR SIMULACIÓN
 ========================================================= */
-
-function ejecutarPipelineAvanzado() {
+async function ejecutarPipelineAvanzado() {
   try {
     const configuracion = obtenerConfiguracion();
 
@@ -82,6 +81,15 @@ function ejecutarPipelineAvanzado() {
     const instrucciones = configuracion.instrucciones.map(
       (texto, indice) => analizarInstruccion(texto, indice)
     );
+    const backend = await postData("/api/pipeline-avanzado", {
+  etapas: configuracion.etapas,
+  tiempoCiclo: configuracion.tiempoCiclo,
+  forwarding: configuracion.forwarding,
+  penalizacionDatos: configuracion.penalizacionDatos,
+  penalizacionControl: configuracion.penalizacionControl,
+  estadoPredictor: configuracion.estadoPredictor,
+  instrucciones: configuracion.instrucciones
+});
 
     const resultadoRiesgos = analizarRiesgosDatos(
       instrucciones,
@@ -127,14 +135,14 @@ function ejecutarPipelineAvanzado() {
       tiempoCiclo: configuracion.tiempoCiclo,
       unidadTiempo: configuracion.unidadTiempo,
       forwarding: configuracion.forwarding,
-      ciclosIdeales,
-      ciclosReales,
-      stalls: totalStalls,
-      flushes: totalFlushes,
-      cpi,
-      throughput,
-      tiempoTotal,
-      precision,
+     ciclosIdeales: backend?.ciclosIdeales ?? ciclosIdeales,
+ciclosReales: backend?.ciclosReales ?? ciclosReales,
+stalls: backend?.stalls ?? totalStalls,
+flushes: backend?.flushes ?? totalFlushes,
+cpi: backend?.cpi ?? cpi,
+throughput: backend?.throughput ?? throughput,
+tiempoTotal: backend?.tiempoTotal ?? tiempoTotal,
+precision: backend?.precision ?? precision,
       aciertosPredictor: resultadoSaltos.aciertos,
       fallosPredictor: resultadoSaltos.fallos,
       totalSaltos: resultadoSaltos.totalSaltos,
