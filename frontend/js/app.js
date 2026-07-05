@@ -63,6 +63,17 @@ async function cargarHistorialDashboard() {
     `;
     return;
   }
+  function exportarCSV() {
+  window.open("http://127.0.0.1:18080/api/exportar/csv", "_blank");
+}
+
+function exportarJSON() {
+  window.open("http://127.0.0.1:18080/api/exportar/json", "_blank");
+}
+
+// Hace que las funciones sean accesibles desde los botones HTML
+window.exportarCSV = exportarCSV;
+window.exportarJSON = exportarJSON;
 
   tabla.innerHTML = "";
 
@@ -81,3 +92,13 @@ async function cargarHistorialDashboard() {
       `;
     });
 }
+function exportarCSV() {
+  window.open("http://127.0.0.1:18080/api/exportar/csv", "_blank");
+}
+
+function exportarJSON() {
+  window.open("http://127.0.0.1:18080/api/exportar/json", "_blank");
+}
+
+window.exportarCSV = exportarCSV;
+window.exportarJSON = exportarJSON;

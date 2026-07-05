@@ -481,5 +481,82 @@ CROW_ROUTE(app, "/api/historial").methods("GET"_method)
     agregarCors(res);
     return res;
 });
+
+CROW_ROUTE(app, "/api/exportar/csv").methods("GET"_method)
+([]() {
+    std::ifstream archivo("data/historial_general.csv");
+
+    if (!archivo.is_open()) {
+        crow::response res(404, "No existe historial_general.csv");
+        agregarCors(res);
+        return res;
+    }
+
+    std::stringstream buffer;
+    buffer << archivo.rdbuf();
+    archivo.close();
+
+    crow::response res(200, buffer.str());
+    res.add_header("Content-Type", "text/csv");
+    res.add_header("Content-Disposition", "attachment; filename=historial_general.csv");
+    agregarCors(res);
+    return res;
+});
+
+CROW_ROUTE(app, "/api/exportar/json").methods("GET"_method)
+([]() {
+    std::ifstream archivo("data/historial_general.csv");
+
+    crow::json::wvalue respuesta;
+    respuesta["historial"] = crow::json::wvalue::list();
+
+    if (!archivo.is_open()) {
+        crow::response res(200, respuesta);
+        agregarCors(res);
+        return res;
+    }
+
+    std::string linea;
+    getline(archivo, linea);
+
+    int index = 0;
+
+    while (getline(archivo, linea)) {
+        if (linea.empty()) continue;
+
+        std::stringstream ss(linea);
+
+        std::string id, modulo, parametros, resultado, fecha;
+
+        getline(ss, id, ',');
+        getline(ss, modulo, ',');
+        getline(ss, parametros, ',');
+        getline(ss, resultado, ',');
+        getline(ss, fecha);
+
+        auto limpiar = [](std::string texto) {
+            if (!texto.empty() && texto.front() == '"') texto.erase(0, 1);
+            if (!texto.empty() && texto.back() == '"') texto.pop_back();
+            return texto;
+        };
+
+        respuesta["historial"][index]["id"] = limpiar(id);
+        respuesta["historial"][index]["modulo"] = limpiar(modulo);
+        respuesta["historial"][index]["parametros"] = limpiar(parametros);
+        respuesta["historial"][index]["resultado"] = limpiar(resultado);
+        respuesta["historial"][index]["fecha"] = limpiar(fecha);
+
+        index++;
+    }
+
+    archivo.close();
+
+    crow::response res(200, respuesta);
+    res.add_header("Content-Type", "application/json");
+    res.add_header("Content-Disposition", "attachment; filename=historial_general.json");
+    agregarCors(res);
+    return res;
+});
     app.port(18080).multithreaded().run();
+
 }
