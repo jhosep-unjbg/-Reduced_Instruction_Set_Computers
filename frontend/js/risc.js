@@ -2,6 +2,8 @@
 // MÓDULO RISC VISUAL
 // ===============================
 
+let timersRisc = [];
+
 const registrosRisc = {
   R0: 0, R1: 0, R2: 0, R3: 0,
   R4: 0, R5: 0, R6: 0, R7: 0,
@@ -29,23 +31,27 @@ const instruccionesRisc = [
   "SW R7, 16(R0)"
 ];
 
+function detenerAnimacionRisc() {
+  timersRisc.forEach(timer => clearTimeout(timer));
+  timersRisc = [];
+}
+
 function inicializarRisc() {
+  cargarModuloRisc();
 
-    cargarModuloRisc();
+  document
+    .getElementById("btnEjecutarRisc")
+    ?.addEventListener("click", ejecutarRisc);
 
-    document
-        .getElementById("btnEjecutarRisc")
-        ?.addEventListener("click", ejecutarRisc);
-
-    document
-        .getElementById("btnReiniciarRisc")
-        ?.addEventListener("click", reiniciarRisc);
-
+  document
+    .getElementById("btnReiniciarRisc")
+    ?.addEventListener("click", reiniciarRisc);
 }
 
 function cargarModuloRisc() {
   pintarRegistrosRisc();
   pintarMemoriaRisc();
+  actualizarALU("---", "---", "---", "---");
 }
 
 function obtenerDatosEntradaRisc() {
@@ -112,7 +118,6 @@ function actualizarALU(operacion, a, b, resultado) {
 }
 
 function marcarLineaRisc(indice) {
-
   const lineas = document.querySelectorAll("#riscCode div");
 
   lineas.forEach(linea => {
@@ -122,18 +127,42 @@ function marcarLineaRisc(indice) {
   if (indice >= 0 && indice < lineas.length) {
     lineas[indice].classList.add("active-line");
   }
-
 }
 
 async function ejecutarRisc() {
+  detenerAnimacionRisc();
+
   const datos = obtenerDatosEntradaRisc();
 
-  limpiarRisc();
+  document.getElementById("historialRisc").innerHTML = "";
+  marcarLineaRisc(-1);
 
-  const respuesta = await postData("/api/risc", datos);
-  if (respuesta) {
-  console.log("Respuesta backend RISC:", respuesta);
-}
+  registrosRisc.R0 = 0;
+  registrosRisc.R1 = 0;
+  registrosRisc.R2 = 0;
+  registrosRisc.R3 = 0;
+  registrosRisc.R4 = 0;
+  registrosRisc.R5 = 0;
+  registrosRisc.R6 = 0;
+  registrosRisc.R7 = 0;
+
+  memoriaRisc["0x100"].valor = datos.A;
+  memoriaRisc["0x104"].valor = datos.B;
+  memoriaRisc["0x108"].valor = datos.C;
+  memoriaRisc["0x10C"].valor = datos.D;
+
+  pintarRegistrosRisc();
+  pintarMemoriaRisc();
+
+  postData("/api/risc", datos)
+    .then(respuesta => {
+      console.log("Respuesta backend RISC:", respuesta);
+    });
+
+  document.getElementById("riscLoads").textContent = 4;
+  document.getElementById("riscStores").textContent = 1;
+  document.getElementById("riscAlu").textContent = 3;
+  document.getElementById("riscTotal").textContent = 9;
 
   let paso = 0;
 
@@ -177,35 +206,23 @@ async function ejecutarRisc() {
       memoriaRisc["0x110"].valor = registrosRisc.R7;
       document.getElementById("resultadoRisc").textContent = registrosRisc.R7;
       agregarHistorialRisc(++paso, instruccionesRisc[8], "Store", `Memoria[0x110] = ${registrosRisc.R7}`);
-      localStorage.setItem(
-    "resultadoRisc",
-    JSON.stringify({
-        instrucciones: 9,
-        memoria: 5,
-        complejidad: 35,
-        pipeline: 95,
-        resultado: registrosRisc.R7
-    }));
-    agregarHistorialRisc(
-    ++paso,
-    instruccionesRisc[8],
-    "Store",
-    `Memoria[0x110] = ${registrosRisc.R7}`
-    );
     }
   ];
 
   ejecucion.forEach((accion, index) => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       marcarLineaRisc(index);
       accion();
       pintarRegistrosRisc();
       pintarMemoriaRisc();
     }, index * 700);
+
+    timersRisc.push(timer);
   });
 }
 
 function limpiarRisc() {
+  detenerAnimacionRisc();
 
   const datos = obtenerDatosEntradaRisc();
 
@@ -227,16 +244,15 @@ function limpiarRisc() {
 
   pintarRegistrosRisc();
   pintarMemoriaRisc();
-
 }
 
 function reiniciarRisc() {
+  detenerAnimacionRisc();
 
-  document.getElementById("inputA_Risc").value = 0;
-  document.getElementById("inputB_Risc").value = 0;
-  document.getElementById("inputC_Risc").value = 0;
-  document.getElementById("inputD_Risc").value = 0;
+  document.getElementById("inputA_Risc").value = 12;
+  document.getElementById("inputB_Risc").value = 8;
+  document.getElementById("inputC_Risc").value = 15;
+  document.getElementById("inputD_Risc").value = 10;
 
   limpiarRisc();
-
 }

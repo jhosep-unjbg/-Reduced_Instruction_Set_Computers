@@ -19,7 +19,7 @@
     </div>
 
     <div style="display:flex;gap:10px;align-items:center;">
-      <button class="btn-secondary" onclick="window.location.href='../index.html'">
+      <button type="button" class="btn-secondary" onclick="window.location.href='../index.html'">
         regresar
       </button>
       <span class="badge">RISC</span>
@@ -66,8 +66,13 @@
         <h2>Código ensamblador RISC</h2>
 
         <div style="display:flex; gap:10px;">
-          <button class="btn-primary" id="btnEjecutarRisc">Ejecutar</button>
-          <button class="btn-secondary" id="btnReiniciarRisc">Reiniciar</button>
+          <button type="button" class="btn-primary" id="btnEjecutarRisc">
+            Ejecutar
+          </button>
+
+          <button type="button" class="btn-secondary" id="btnReiniciarRisc">
+            Reiniciar
+          </button>
         </div>
       </div>
 
@@ -86,6 +91,7 @@
 
     <div class="panel">
       <h2>Banco de registros</h2>
+
       <table>
         <thead>
           <tr>
@@ -103,6 +109,7 @@
 
     <div class="panel">
       <h2>Memoria</h2>
+
       <table>
         <thead>
           <tr>
@@ -119,10 +126,25 @@
       <h2>ALU</h2>
 
       <div class="alu-display">
-        <div><span>Operación</span><strong id="aluOperacion">---</strong></div>
-        <div><span>Operando A</span><strong id="aluA">---</strong></div>
-        <div><span>Operando B</span><strong id="aluB">---</strong></div>
-        <div><span>Resultado</span><strong id="aluResultado">---</strong></div>
+        <div>
+          <span>Operación</span>
+          <strong id="aluOperacion">---</strong>
+        </div>
+
+        <div>
+          <span>Operando A</span>
+          <strong id="aluA">---</strong>
+        </div>
+
+        <div>
+          <span>Operando B</span>
+          <strong id="aluB">---</strong>
+        </div>
+
+        <div>
+          <span>Resultado</span>
+          <strong id="aluResultado">---</strong>
+        </div>
       </div>
     </div>
 
