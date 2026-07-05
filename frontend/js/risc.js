@@ -178,6 +178,21 @@ async function ejecutarRisc() {
       memoriaRisc["0x110"].valor = registrosRisc.R7;
       document.getElementById("resultadoRisc").textContent = registrosRisc.R7;
       agregarHistorialRisc(++paso, instruccionesRisc[8], "Store", `Memoria[0x110] = ${registrosRisc.R7}`);
+      localStorage.setItem(
+    "resultadoRisc",
+    JSON.stringify({
+        instrucciones: 9,
+        memoria: 5,
+        complejidad: 35,
+        pipeline: 95,
+        resultado: registrosRisc.R7
+    }));
+    agregarHistorialRisc(
+    ++paso,
+    instruccionesRisc[8],
+    "Store",
+    `Memoria[0x110] = ${registrosRisc.R7}`
+    );
     }
   ];
 
