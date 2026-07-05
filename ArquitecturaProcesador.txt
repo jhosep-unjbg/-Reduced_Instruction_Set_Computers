@@ -1,59 +1,126 @@
-ArquitecturaComputadoras/
+=========================================================
+SIMULADOR DE ARQUITECTURA DE COMPUTADORAS
+Versión Final
+Arquitectura MVC + Crow Framework + Frontend Web
+=========================================================
+
+Arquitectura_procesador/
 │
 ├── backend/
 │   │
-│   ├── main.cpp                 // Punto de entrada
-│   ├── servidor.cpp             // Configuración de Crow
+│   ├── main.cpp
+│   ├── servidor.cpp
 │   ├── servidor.h
+│   ├── servidor_main.cpp
 │   │
 │   ├── controllers/
-│   │   ├── PipelineController.cpp
-│   │   ├── PipelineController.h
-│   │   ├── RiscController.cpp
-│   │   ├── RiscController.h
-│   │   ├── CiscController.cpp
-│   │   ├── CiscController.h
-│   │   ├── MonocicloController.cpp
-│   │   └── MonocicloController.h
-│   │
-│   ├── models/
-│   │   ├── Pipeline.h
-│   │   ├── Pipeline.cpp
-│   │   ├── Risc.h
-│   │   ├── Risc.cpp
-│   │   ├── Cisc.h
-│   │   ├── Cisc.cpp
-│   │   ├── Monociclo.h
-│   │   └── Monociclo.cpp
+│   │   ├── Pipelinecontroller.cpp
+│   │   ├── Pipelinecontroller.h
+│   │   ├── Monociclocontroller.cpp
+│   │   ├── Monociclocontroller.h
+│   │   ├── Risccontroller.cpp
+│   │   ├── Risccontroller.h
+│   │   ├── Cisccontroller.cpp
+│   │   ├── Cisccontroller.h
+│   │   ├── Comparacioncontroller.cpp
+│   │   ├── Comparacioncontroller.h
+│   │   ├── Comparacionpipelinecontroller.cpp
+│   │   ├── Comparacionpipelinecontroller.h
+│   │   ├── Pipelineavanzadocontroller.cpp
+│   │   ├── Pipelineavanzadocontroller.h
+│   │   ├── Pipelineganttcontroller.cpp
+│   │   └── Pipelineganttcontroller.h
 │   │
 │   ├── services/
-│   │   ├── PipelineService.h
-│   │   ├── PipelineService.cpp
-│   │   ├── RiscService.h
-│   │   ├── RiscService.cpp
-│   │   ├── CiscService.h
-│   │   ├── CiscService.cpp
-│   │   ├── MonocicloService.h
-│   │   ├── MonocicloService.cpp
-│   │   ├── ArchivoService.h
-│   │   └── ArchivoService.cpp
+│   │   ├── Pipelineservice.cpp
+│   │   ├── Pipelineservice.h
+│   │   ├── Monocicloservice.cpp
+│   │   ├── Monocicloservice.h
+│   │   ├── Riscservice.cpp
+│   │   ├── Riscservice.h
+│   │   ├── Ciscservice.cpp
+│   │   ├── Ciscservice.h
+│   │   ├── Comparacionservice.cpp
+│   │   ├── Comparacionservice.h
+│   │   ├── Comparacionpipelineservice.cpp
+│   │   ├── Comparacionpipelineservice.h
+│   │   ├── PipelineAvanzadoService.cpp
+│   │   ├── PipelineAvanzadoService.h
+│   │   ├── PipelineGanttService.cpp
+│   │   ├── PipelineGanttService.h
+│   │   ├── Archivoservice.cpp
+│   │   └── Archivoservice.h
 │   │
-│   ├── utils/
-│   │   ├── Json.h
-│   │   ├── Json.cpp
-│   │   ├── Csv.h
-│   │   ├── Csv.cpp
-│   │   ├── Utilidades.h
-│   │   └── Utilidades.cpp
+│   ├── models/
+│   │   ├── Pipeline.cpp
+│   │   ├── Pipeline.h
+│   │   ├── Monociclo.cpp
+│   │   ├── Monociclo.h
+│   │   ├── Risc.cpp
+│   │   ├── Risc.h
+│   │   ├── Cisc.cpp
+│   │   ├── Cisc.h
+│   │   ├── Comparacion.cpp
+│   │   ├── Comparacion.h
+│   │   ├── Comparacionpipeline.cpp
+│   │   ├── Comparacionpipeline.h
+│   │   ├── PipelineAvanzado.cpp
+│   │   ├── PipelineAvanzado.h
+│   │   ├── PipelineGantt.cpp
+│   │   └── PipelineGantt.h
 │   │
-│   └── data/
-│       ├── historial.csv
-│       ├── resultados.csv
-│       └── usuarios.csv
+│   ├── data/
+│   │   ├── historial.csv
+│   │   ├── historial_general.csv
+│   │   ├── resultado.csv
+│   │   ├── resultado.json
+│   │   ├── gantt.csv
+│   │   └── gantt.json
+│   │
+│   ├── vendor/
+│   │   ├── Crow/
+│   │   └── asio/
+│   │
+│   └── servidor.exe
 │
 ├── frontend/
+│   │
+│   ├── index.html
+│   │
+│   ├── css/
+│   │   └── styles.css
+│   │
+│   ├── js/
+│   │   ├── api.js
+│   │   ├── app.js
+│   │   ├── layout.js
+│   │   ├── pipeline.js
+│   │   ├── monociclo.js
+│   │   ├── risc.js
+│   │   ├── cisc.js
+│   │   ├── comparacion.js
+│   │   ├── comparacion_pipeline.js
+│   │   └── pipelineAvanzado.js
+│   │
+│   ├── components/
+│   │   └── sidebar.html
+│   │
+│   ├── pages/
+│   │   ├── pipeline.html
+│   │   ├── monociclo.html
+│   │   ├── risc.html
+│   │   ├── cisc.html
+│   │   ├── comparacion.html
+│   │   ├── comparacion_pipeline.html
+│   │   └── pipeline_avanzado.html
+│   │
+│   └── assets/
 │
-├── assets/
 ├── docs/
-├── CMakeLists.txt
-└── README.md
+│   ├── ManualUsuario.pdf
+│   ├── ManualTecnico.pdf
+│   └── Diagramas/
+│
+├── README.md
+│
+└── .gitignore
