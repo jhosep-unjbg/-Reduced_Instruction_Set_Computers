@@ -1,1 +1,10 @@
+ID,Modulo,Parametros,Resultado,Fecha
 1,"Pipeline","k=5; n=4; tau=2.000000","ciclos=8; tiempo=16.000000; speedup=2.500000","2026-07-05 12:13:05"
+2,"Pipeline","k=5; n=4; tau=2.000000","ciclos=8; tiempo=16.000000; speedup=2.500000","2026-07-05 14:05:15"
+3,"Pipeline","k=6; n=4; tau=2.000000","ciclos=9; tiempo=18.000000; speedup=2.666667","2026-07-05 14:05:34"
+4,"Pipeline","k=5; n=4; tau=100.000000","ciclos=8; tiempo=800.000000; speedup=2.500000","2026-07-05 14:05:44"
+5,"Pipeline","k=5; n=4; tau=2.000000","ciclos=8; tiempo=16.000000; speedup=2.500000","2026-07-05 14:06:17"
+6,"Pipeline","k=5; n=4; tau=2.000000","ciclos=8; tiempo=16.000000; speedup=2.500000","2026-07-05 14:34:06"
+7,"Pipeline","k=5; n=4; tau=2.000000","ciclos=8; tiempo=16.000000; speedup=2.500000","2026-07-05 14:42:05"
+8,"Monociclo","IM=250.000000; RF_Read=150.000000; ALU=200.000000; DM=300.000000; RF_Write=150.000000","TipoR=750.000000; LW=1050.000000; SW=900.000000; BEQ=600.000000; Periodo=1050.000000; FrecuenciaMHz=952.380952; Slack=450.000000; Eficiencia=57.142857","2026-07-05 14:42:10"
+9,"Monociclo","IM=250.000000; RF_Read=50.000000; ALU=200.000000; DM=300.000000; RF_Write=150.000000","TipoR=650.000000; LW=950.000000; SW=800.000000; BEQ=500.000000; Periodo=950.000000; FrecuenciaMHz=1052.631579; Slack=450.000000; Eficiencia=52.631579","2026-07-05 14:42:40"

@@ -18,6 +18,7 @@
 #include "services/Archivoservice.h"
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 void agregarCors(crow::response& res) {
     res.add_header("Access-Control-Allow-Origin", "*");
@@ -100,7 +101,14 @@ archivo.guardarHistorialGeneral(
         agregarCors(res);
         return res;
     });
-    CROW_ROUTE(app, "/api/monociclo").methods("POST"_method)
+  CROW_ROUTE(app, "/api/monociclo").methods("OPTIONS"_method)
+([](const crow::request&) {
+    crow::response res(204);
+    agregarCors(res);
+    return res;
+});
+
+CROW_ROUTE(app, "/api/monociclo").methods("POST"_method)
 ([](const crow::request& req) {
     auto body = crow::json::load(req.body);
 
@@ -118,10 +126,28 @@ archivo.guardarHistorialGeneral(
 
     Monociclo monociclo(im, rfRead, alu, dm, rfWrite);
     MonocicloService service;
-
     Monociclo resultado = service.calcular(monociclo);
 
     double sw = im + rfRead + alu + dm;
+    std::cout << "Guardando historial de Monociclo..." << std::endl;
+    ArchivoService archivo;
+    archivo.guardarHistorialGeneral(
+        "Monociclo",
+        "IM=" + std::to_string(im) +
+        "; RF_Read=" + std::to_string(rfRead) +
+        "; ALU=" + std::to_string(alu) +
+        "; DM=" + std::to_string(dm) +
+        "; RF_Write=" + std::to_string(rfWrite),
+        "TipoR=" + std::to_string(resultado.getTiempoTipoR()) +
+        "; LW=" + std::to_string(resultado.getTiempoLW()) +
+        "; SW=" + std::to_string(sw) +
+        "; BEQ=" + std::to_string(resultado.getTiempoBEQ()) +
+        "; Periodo=" + std::to_string(resultado.getPeriodoReloj()) +
+        "; FrecuenciaMHz=" + std::to_string(resultado.getFrecuenciaMHz()) +
+        "; Slack=" + std::to_string(resultado.getSlackBEQ()) +
+        "; Eficiencia=" + std::to_string(resultado.getEficienciaBEQ())
+    );
+    std::cout << "Historial de Monociclo guardado." << std::endl;
 
     crow::json::wvalue json;
     json["tipoR"] = resultado.getTiempoTipoR();

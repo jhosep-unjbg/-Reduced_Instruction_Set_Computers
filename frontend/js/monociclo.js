@@ -1,12 +1,20 @@
 async function inicializarMonociclo() {
-  await calcularMonociclo();
+  console.log("Inicializando Monociclo...");
 
-  document
-    .getElementById("btnCalcularMonociclo")
-    ?.addEventListener("click", calcularMonociclo);
+  const btn = document.getElementById("btnCalcularMonociclo");
+  console.log("Botón Monociclo:", btn);
+
+  if (!btn) {
+    console.error("No se encontró el botón btnCalcularMonociclo");
+    return;
+  }
+
+  btn.addEventListener("click", calcularMonociclo);
 }
 
 async function calcularMonociclo() {
+  console.log("Click en Calcular Monociclo");
+
   const im = Number(document.getElementById("im").value);
   const rfRead = Number(document.getElementById("rfRead").value);
   const alu = Number(document.getElementById("alu").value);

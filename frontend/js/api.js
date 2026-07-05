@@ -20,6 +20,7 @@ async function postData(endpoint, data) {
     return null;
   }
 }
+
 async function getData(endpoint) {
   try {
     const response = await fetch(`${API_URL}${endpoint}`);
