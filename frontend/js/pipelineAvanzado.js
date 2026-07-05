@@ -1268,3 +1268,134 @@ window.reiniciarPipelineAvanzado =
 document.addEventListener("DOMContentLoaded", () => {
   initPipelineAvanzado();
 });
+let simulacionPasoPipeline = null;
+let cicloPasoPipeline = 0;
+
+function prepararSimulacionPasoAPaso() {
+  const configuracion = obtenerConfiguracion();
+  validarConfiguracion(configuracion);
+
+  const instrucciones = configuracion.instrucciones.map(
+    (texto, indice) => analizarInstruccion(texto, indice)
+  );
+
+  const riesgos = analizarRiesgosDatos(
+    instrucciones,
+    configuracion.forwarding,
+    configuracion.penalizacionDatos
+  );
+
+  const saltos = simularPredictorSaltos(
+    instrucciones,
+    configuracion.estadoPredictor,
+    configuracion.penalizacionControl
+  );
+
+  simulacionPasoPipeline = simularPipelineCicloPorCiclo(
+    instrucciones,
+    riesgos,
+    saltos.detalles,
+    configuracion
+  );
+
+  cicloPasoPipeline = 0;
+
+  asignarTexto("cicloActualPipeline", "0");
+  asignarTexto("estadoSimulacionPipeline", "Preparado");
+
+  const vista = document.getElementById("vistaCicloPipeline");
+  if (vista) {
+    vista.textContent = "Simulación preparada. Presiona Siguiente ciclo.";
+  }
+}
+
+function siguienteCicloPipeline() {
+  if (!simulacionPasoPipeline) {
+    prepararSimulacionPasoAPaso();
+  }
+
+  if (cicloPasoPipeline >= simulacionPasoPipeline.totalCiclos) {
+    asignarTexto("estadoSimulacionPipeline", "Finalizado");
+    return;
+  }
+
+  cicloPasoPipeline++;
+
+  asignarTexto("cicloActualPipeline", cicloPasoPipeline);
+  asignarTexto("estadoSimulacionPipeline", "Ejecutando");
+
+  mostrarCicloActualPipeline(cicloPasoPipeline);
+}
+
+function mostrarCicloActualPipeline(ciclo) {
+  const vista = document.getElementById("vistaCicloPipeline");
+  if (!vista || !simulacionPasoPipeline) return;
+
+  const actividades = [];
+
+  simulacionPasoPipeline.gantt.forEach((fila) => {
+    const celda = fila.ciclos.find((item) => item.ciclo === ciclo);
+
+    if (celda) {
+      actividades.push(
+        `${fila.instruccion.etiqueta} (${fila.instruccion.operacion}) → ${celda.etapa}`
+      );
+    }
+  });
+
+  if (actividades.length === 0) {
+    vista.innerHTML = `<p>No hay actividad en el ciclo ${ciclo}.</p>`;
+    return;
+  }
+
+  vista.innerHTML = `
+    <h3>Ciclo ${ciclo}</h3>
+    <ul class="observation-list">
+      ${actividades.map((item) => `<li>${item}</li>`).join("")}
+    </ul>
+  `;
+
+  resaltarColumnaGantt(ciclo);
+}
+
+function resaltarColumnaGantt(ciclo) {
+  const tabla = document.getElementById("tablaGantt");
+  if (!tabla) return;
+
+  tabla.querySelectorAll("td, th").forEach((celda) => {
+    celda.classList.remove("ciclo-activo");
+  });
+
+  const indiceColumna = ciclo + 1;
+
+  tabla.querySelectorAll("tr").forEach((fila) => {
+    const celda = fila.children[indiceColumna - 1];
+    if (celda) {
+      celda.classList.add("ciclo-activo");
+    }
+  });
+}
+
+function reiniciarSimulacionPasoAPaso() {
+  simulacionPasoPipeline = null;
+  cicloPasoPipeline = 0;
+
+  asignarTexto("cicloActualPipeline", "0");
+  asignarTexto("estadoSimulacionPipeline", "Detenido");
+
+  const vista = document.getElementById("vistaCicloPipeline");
+  if (vista) {
+    vista.textContent = "Prepara la simulación para avanzar ciclo por ciclo.";
+  }
+
+  const tabla = document.getElementById("tablaGantt");
+  if (tabla) {
+    tabla.querySelectorAll("td, th").forEach((celda) => {
+      celda.classList.remove("ciclo-activo");
+    });
+  }
+}
+
+window.prepararSimulacionPasoAPaso = prepararSimulacionPasoAPaso;
+window.siguienteCicloPipeline = siguienteCicloPipeline;
+window.reiniciarSimulacionPasoAPaso = reiniciarSimulacionPasoAPaso;

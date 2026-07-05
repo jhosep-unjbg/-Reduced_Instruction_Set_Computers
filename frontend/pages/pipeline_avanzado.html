@@ -161,6 +161,32 @@ J L3 T</textarea>
     </div>
   </section>
 
+  <section class="panel">
+    <h2>Simulación ciclo por ciclo</h2>
+
+    <div class="actions">
+      <button class="btn primary" onclick="prepararSimulacionPasoAPaso()">Preparar simulación</button>
+      <button class="btn secondary" onclick="siguienteCicloPipeline()">Siguiente ciclo</button>
+      <button class="btn danger" onclick="reiniciarSimulacionPasoAPaso()">Reiniciar pasos</button>
+    </div>
+
+    <div class="result-grid">
+      <div class="result-card">
+        <span>Ciclo actual</span>
+        <strong id="cicloActualPipeline">0</strong>
+      </div>
+
+      <div class="result-card">
+        <span>Estado</span>
+        <strong id="estadoSimulacionPipeline">Detenido</strong>
+      </div>
+    </div>
+
+    <div id="vistaCicloPipeline" class="observation-box">
+      Prepara la simulación para avanzar ciclo por ciclo.
+    </div>
+  </section>
+
   <section class="panel two-columns">
     <div>
       <h2>Historial del predictor</h2>
