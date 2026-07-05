@@ -570,3 +570,21 @@ td {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(71, 85, 105, 0.35);
 }
+.btn-secondary{
+
+    background:#334155;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:600;
+    transition:.25s;
+
+}
+
+.btn-secondary:hover{
+
+    background:#475569;
+
+}
