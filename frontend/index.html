@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | Simulador CPU</title>
+
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -14,6 +15,8 @@
 
     <main class="main">
 
+        <!-- CABECERA -->
+
         <header class="topbar">
 
             <div>
@@ -21,7 +24,7 @@
                 <p>Dashboard general del sistema</p>
             </div>
 
-            <span class="badge">Backend listo</span>
+            <span class="badge">Backend Crow conectado</span>
 
         </header>
 
@@ -45,8 +48,8 @@
             </div>
 
             <div class="stat-box">
-                <h3>CSV / JSON</h3>
-                <p>Exportación</p>
+                <h3>Crow API</h3>
+                <p>Backend conectado</p>
             </div>
 
         </section>
@@ -57,43 +60,43 @@
 
             <div class="card">
                 <h3>Pipeline</h3>
-                <p>Ciclos, tiempo total y speedup.</p>
+                <p>Cálculo de ciclos, tiempo total y speedup.</p>
                 <a href="pages/pipeline.html">Abrir módulo</a>
             </div>
 
             <div class="card">
                 <h3>Monociclo</h3>
-                <p>Tipo R, LW, SW, BEQ, frecuencia y eficiencia.</p>
+                <p>Arquitectura no segmentada de ciclo único.</p>
                 <a href="pages/monociclo.html">Abrir módulo</a>
             </div>
 
             <div class="card">
                 <h3>RISC</h3>
-                <p>Assembler, Load/Store, registros y ALU.</p>
+                <p>Simulación Load/Store, registros y ALU.</p>
                 <a href="pages/risc.html">Abrir módulo</a>
             </div>
 
             <div class="card">
                 <h3>CISC</h3>
-                <p>Assembler, memoria y operaciones complejas.</p>
+                <p>Simulación de instrucciones complejas.</p>
                 <a href="pages/cisc.html">Abrir módulo</a>
             </div>
 
             <div class="card">
                 <h3>Comparación RISC vs CISC</h3>
-                <p>Comparación de instrucciones, memoria, complejidad y eficiencia.</p>
+                <p>Análisis de rendimiento y complejidad.</p>
                 <a href="pages/comparacion.html">Abrir módulo</a>
             </div>
 
             <div class="card">
                 <h3>Pipeline vs Monociclo</h3>
-                <p>Comparación de rendimiento, speedup y eficiencia.</p>
+                <p>Comparación de rendimiento y speedup.</p>
                 <a href="pages/comparacion_pipeline.html">Abrir módulo</a>
             </div>
 
             <div class="card">
                 <h3>Pipeline Avanzado</h3>
-                <p>Hazards, Forwarding, Flush, Predictor y Gantt.</p>
+                <p>Forwarding, Hazards, Predictor y Gantt.</p>
                 <a href="pages/pipeline_avanzado.html">Abrir módulo</a>
             </div>
 
@@ -106,89 +109,68 @@
             <h2>Arquitectura del sistema</h2>
 
             <div class="architecture">
+
                 <span>Frontend</span>
+
+                <span>Fetch API</span>
+
+                <span>Crow</span>
+
                 <span>Controller</span>
+
                 <span>Service</span>
+
                 <span>Model</span>
-                <span>ArchivoService</span>
+
                 <span>CSV / JSON</span>
+
             </div>
 
         </section>
 
-        <!-- HISTORIAL -->
+        <!-- HISTORIAL DINÁMICO -->
 
         <section class="panel">
 
-            <h2>Últimas simulaciones</h2>
+            <h2>Historial de simulaciones</h2>
 
-            <table>
+            <div class="table-container">
 
-                <thead>
+                <table>
 
-                    <tr>
-                        <th>#</th>
-                        <th>Módulo</th>
-                        <th>Estado</th>
-                        <th>Exportación</th>
-                    </tr>
+                    <thead>
 
-                </thead>
+                        <tr>
 
-                <tbody>
+                            <th>ID</th>
 
-                    <tr>
-                        <td>1</td>
-                        <td>Pipeline</td>
-                        <td>Completado</td>
-                        <td>CSV</td>
-                    </tr>
+                            <th>Fecha</th>
 
-                    <tr>
-                        <td>2</td>
-                        <td>Monociclo</td>
-                        <td>Completado</td>
-                        <td>CSV</td>
-                    </tr>
+                            <th>Módulo</th>
 
-                    <tr>
-                        <td>3</td>
-                        <td>RISC</td>
-                        <td>Completado</td>
-                        <td>CSV / JSON</td>
-                    </tr>
+                            <th>Parámetros</th>
 
-                    <tr>
-                        <td>4</td>
-                        <td>CISC</td>
-                        <td>Completado</td>
-                        <td>CSV / JSON</td>
-                    </tr>
+                            <th>Resultado</th>
 
-                    <tr>
-                        <td>5</td>
-                        <td>Comparación RISC vs CISC</td>
-                        <td>Completado</td>
-                        <td>JSON</td>
-                    </tr>
+                        </tr>
 
-                    <tr>
-                        <td>6</td>
-                        <td>Pipeline vs Monociclo</td>
-                        <td>Completado</td>
-                        <td>CSV</td>
-                    </tr>
+                    </thead>
 
-                    <tr>
-                        <td>7</td>
-                        <td>Pipeline Avanzado</td>
-                        <td>Completado</td>
-                        <td>CSV / JSON</td>
-                    </tr>
+                    <tbody id="tablaHistorialDashboard">
 
-                </tbody>
+                        <tr>
 
-            </table>
+                            <td colspan="5">
+                                Cargando historial...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
 
         </section>
 
