@@ -1,12 +1,12 @@
-function inicializarPipeline() {
-  calcularPipeline();
+async function inicializarPipeline() {
+  await calcularPipeline();
 
   document
     .getElementById("btnCalcularPipeline")
     ?.addEventListener("click", calcularPipeline);
 }
 
-function calcularPipeline() {
+async function calcularPipeline() {
   const k = Number(document.getElementById("k").value);
   const n = Number(document.getElementById("n").value);
   const tau = Number(document.getElementById("tau").value);
@@ -16,9 +16,21 @@ function calcularPipeline() {
     return;
   }
 
-  const ciclos = k + (n - 1);
-  const tiempo = ciclos * tau;
-  const speedup = (n * k) / ciclos;
+  const resultado = await postData("/api/pipeline", {
+    k,
+    n,
+    tau
+  });
+ 
+
+  if (!resultado) {
+    alert("No se pudo conectar con el backend Crow.");
+    return;
+  }
+
+  const ciclos = resultado.ciclos;
+  const tiempo = resultado.tiempoTotal;
+  const speedup = resultado.speedup;
   const eficiencia = (speedup / k) * 100;
 
   document.getElementById("ciclos").textContent = ciclos + " ciclos";

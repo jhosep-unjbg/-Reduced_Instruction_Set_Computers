@@ -4,11 +4,26 @@
 #include "models/Pipeline.h"
 #include "services/Pipelineservice.h"
 
+void agregarCors(crow::response& res) {
+    res.add_header("Access-Control-Allow-Origin", "*");
+    res.add_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.add_header("Access-Control-Allow-Headers", "Content-Type");
+}
+
 void iniciarServidor() {
     crow::SimpleApp app;
 
     CROW_ROUTE(app, "/")([]() {
-        return "Servidor Crow del Simulador funcionando";
+        crow::response res(200, "Servidor Crow del Simulador funcionando");
+        agregarCors(res);
+        return res;
+    });
+
+    CROW_ROUTE(app, "/api/pipeline").methods("OPTIONS"_method)
+    ([](const crow::request&) {
+        crow::response res(204);
+        agregarCors(res);
+        return res;
     });
 
     CROW_ROUTE(app, "/api/pipeline").methods("POST"_method)
@@ -16,7 +31,9 @@ void iniciarServidor() {
         auto body = crow::json::load(req.body);
 
         if (!body) {
-            return crow::response(400, "{\"error\":\"JSON invalido\"}");
+            crow::response res(400, "{\"error\":\"JSON invalido\"}");
+            agregarCors(res);
+            return res;
         }
 
         int k = body["k"].i();
@@ -28,15 +45,17 @@ void iniciarServidor() {
 
         Pipeline resultado = service.calcular(pipeline);
 
-        crow::json::wvalue res;
-        res["k"] = resultado.getK();
-        res["n"] = resultado.getN();
-        res["tau"] = resultado.getTau();
-        res["ciclos"] = resultado.getCiclos();
-        res["tiempoTotal"] = resultado.getTiempoTotal();
-        res["speedup"] = resultado.getSpeedup();
+        crow::json::wvalue json;
+        json["k"] = resultado.getK();
+        json["n"] = resultado.getN();
+        json["tau"] = resultado.getTau();
+        json["ciclos"] = resultado.getCiclos();
+        json["tiempoTotal"] = resultado.getTiempoTotal();
+        json["speedup"] = resultado.getSpeedup();
 
-        return crow::response(200, res);
+        crow::response res(200, json);
+        agregarCors(res);
+        return res;
     });
 
     app.port(18080).multithreaded().run();
