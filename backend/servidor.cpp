@@ -7,6 +7,8 @@
 #include "services/Monocicloservice.h"
 #include "models/Risc.h"
 #include "services/Riscservice.h"
+#include "models/Cisc.h"
+#include "services/Ciscservice.h"
 
 void agregarCors(crow::response& res) {
     res.add_header("Access-Control-Allow-Origin", "*");
@@ -129,6 +131,61 @@ CROW_ROUTE(app, "/api/risc").methods("POST"_method)
     json["stores"] = resultado.getStores();
     json["operacionesAlu"] = resultado.getOperacionesAlu();
     json["codigoAssembler"] = resultado.getCodigoAssembler();
+
+    crow::response res(200, json);
+    agregarCors(res);
+    return res;
+});
+CROW_ROUTE(app, "/api/cisc").methods("POST"_method)
+([](const crow::request& req) {
+    auto body = crow::json::load(req.body);
+
+    if (!body) {
+        crow::response res(400, "{\"error\":\"JSON invalido\"}");
+        agregarCors(res);
+        return res;
+    }
+
+    int A = body["A"].i();
+    int B = body["B"].i();
+    int C = body["C"].i();
+    int D = body["D"].i();
+
+    Cisc cisc(A, B, C, D);
+    CiscService service;
+
+    Cisc resultado = service.calcular(cisc);
+
+    crow::json::wvalue json;
+    json["A"] = A;
+    json["B"] = B;
+    json["C"] = C;
+    json["D"] = D;
+    json["resultado"] = resultado.getResultado();
+    json["instrucciones"] = resultado.getNumeroInstrucciones();
+    json["accesosMemoria"] = resultado.getAccesosMemoria();
+    json["operacionesAlu"] = resultado.getOperacionesAlu();
+    json["codigoAssembler"] = resultado.getCodigoAssembler();
+
+    crow::response res(200, json);
+    agregarCors(res);
+    return res;
+});
+CROW_ROUTE(app, "/api/comparacion-risc-cisc").methods("GET"_method)
+([]() {
+    crow::json::wvalue json;
+
+    json["risc"]["instrucciones"] = 9;
+    json["risc"]["memoria"] = 5;
+    json["risc"]["complejidad"] = 35;
+    json["risc"]["pipeline"] = 95;
+    json["risc"]["resultado"] = 100;
+
+    json["cisc"]["instrucciones"] = 6;
+    json["cisc"]["memoria"] = 4;
+    json["cisc"]["complejidad"] = 90;
+    json["cisc"]["pipeline"] = 65;
+    json["cisc"]["resultado"] = 100;
 
     crow::response res(200, json);
     agregarCors(res);

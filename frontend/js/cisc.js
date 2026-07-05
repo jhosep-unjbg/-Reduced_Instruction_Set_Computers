@@ -124,7 +124,11 @@ async function ejecutarCisc() {
 
     limpiarCisc();
 
-    const respuesta = await postData("/cisc/simular", datos);
+   const respuesta = await postData("/api/cisc", datos);
+
+if (respuesta) {
+  console.log("Respuesta backend CISC:", respuesta);
+}
   let paso = 0;
 
   const ejecucion = [

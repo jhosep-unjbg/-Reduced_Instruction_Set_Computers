@@ -7,7 +7,7 @@ function inicializarComparacion() {
 }
 
 async function cargarModuloComparacion() {
-  const datosBackend = await getData("/comparacion/risc-cisc");
+  const datosBackend = await getData("/api/comparacion-risc-cisc");
 
   if (datosBackend) {
     pintarComparacion(datosBackend);
