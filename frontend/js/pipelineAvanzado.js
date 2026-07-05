@@ -697,79 +697,137 @@ function generarGantt(
   configuracion,
   ciclosReales
 ) {
+  const simulacion = simularPipelineCicloPorCiclo(
+    instrucciones,
+    riesgos,
+    detallesSaltos,
+    configuracion
+  );
+
+  renderizarGanttV2(simulacion);
+}
+/* =========================================================
+   GANTT V2 - SIMULACIÓN CICLO POR CICLO
+========================================================= */
+
+function simularPipelineCicloPorCiclo(
+  instrucciones,
+  riesgos,
+  detallesSaltos,
+  configuracion
+) {
+  const etapas = generarNombresEtapas(configuracion.etapas);
+  const gantt = instrucciones.map((instruccion) => ({
+    instruccion,
+    ciclos: []
+  }));
+
+  let cicloGlobal = 1;
+  let retrasoAcumulado = 0;
+
+  instrucciones.forEach((instruccion, indice) => {
+    let cicloActual = indice + 1 + retrasoAcumulado;
+
+    const riesgo = riesgos[indice] || { stalls: 0 };
+    const salto = detallesSaltos.find(
+      (item) => item.indice === indice
+    );
+
+    agregarCeldaGanttV2(gantt, indice, cicloActual, etapas[0]);
+    cicloActual++;
+
+    agregarCeldaGanttV2(gantt, indice, cicloActual, etapas[1]);
+    cicloActual++;
+
+    for (let i = 0; i < riesgo.stalls; i++) {
+      agregarCeldaGanttV2(gantt, indice, cicloActual, "STALL");
+      cicloActual++;
+      retrasoAcumulado++;
+    }
+
+    if (instruccion.esSalto) {
+      agregarCeldaGanttV2(gantt, indice, cicloActual, "EX");
+      cicloActual++;
+
+      if (salto && !salto.acierto) {
+        for (let i = 0; i < salto.ciclosFlush; i++) {
+          agregarCeldaGanttV2(gantt, indice, cicloActual, "FLUSH");
+          cicloActual++;
+          retrasoAcumulado++;
+        }
+      }
+    } else {
+      for (let e = 2; e < etapas.length; e++) {
+        agregarCeldaGanttV2(gantt, indice, cicloActual, etapas[e]);
+        cicloActual++;
+      }
+    }
+
+    cicloGlobal = Math.max(cicloGlobal, cicloActual - 1);
+  });
+
+  return {
+    gantt,
+    totalCiclos: cicloGlobal,
+    etapas
+  };
+}
+
+function agregarCeldaGanttV2(gantt, indice, ciclo, etapa) {
+  gantt[indice].ciclos.push({
+    ciclo,
+    etapa
+  });
+}
+
+function renderizarGanttV2(simulacion) {
   const encabezado = document.getElementById("ganttHead");
   const cuerpo = document.getElementById("ganttBody");
 
-  if (!encabezado || !cuerpo) {
-    return;
-  }
+  if (!encabezado || !cuerpo) return;
 
   encabezado.innerHTML = "";
   cuerpo.innerHTML = "";
 
-  const ciclosVisibles = Math.min(ciclosReales, 60);
+  const totalCiclos = Math.min(simulacion.totalCiclos, 60);
 
-  const filaEncabezado = document.createElement("tr");
+  const filaHead = document.createElement("tr");
 
-  const celdaInstruccion = document.createElement("th");
-  celdaInstruccion.textContent = "Instrucción";
-  filaEncabezado.appendChild(celdaInstruccion);
+  const thInicial = document.createElement("th");
+  thInicial.textContent = "Instrucción";
+  filaHead.appendChild(thInicial);
 
-  for (let ciclo = 1; ciclo <= ciclosVisibles; ciclo++) {
+  for (let ciclo = 1; ciclo <= totalCiclos; ciclo++) {
     const th = document.createElement("th");
     th.textContent = `C${ciclo}`;
-    filaEncabezado.appendChild(th);
+    filaHead.appendChild(th);
   }
 
-  encabezado.appendChild(filaEncabezado);
+  encabezado.appendChild(filaHead);
 
-  const etapas = generarNombresEtapas(
-    configuracion.etapas
-  );
-
-  let retrasoAcumulado = 0;
-
-  instrucciones.forEach((instruccion, indice) => {
+  simulacion.gantt.forEach((filaGantt) => {
     const fila = document.createElement("tr");
 
-    const celdaNombre = document.createElement("td");
-    celdaNombre.textContent =
-      `${instruccion.etiqueta} (${instruccion.operacion})`;
+    const tdNombre = document.createElement("td");
+    tdNombre.textContent =
+      `${filaGantt.instruccion.etiqueta} (${filaGantt.instruccion.operacion})`;
+    tdNombre.title = filaGantt.instruccion.texto;
+    tdNombre.className = "gantt-instruccion";
 
-    celdaNombre.title = instruccion.texto;
-    celdaNombre.className = "gantt-instruccion";
+    fila.appendChild(tdNombre);
 
-    fila.appendChild(celdaNombre);
-
-    const celdas = Array(ciclosVisibles).fill("");
-
-    const cicloInicio = indice + 1 + retrasoAcumulado;
-    const stalls = riesgos[indice]?.stalls || 0;
-
-    const salto = detallesSaltos.find(
-      (detalle) => detalle.indice === indice
-    );
-
-    colocarEtapasEnGantt(
-      celdas,
-      cicloInicio,
-      etapas,
-      stalls,
-      instruccion,
-      salto
-    );
-
-    for (let ciclo = 0; ciclo < ciclosVisibles; ciclo++) {
+    for (let ciclo = 1; ciclo <= totalCiclos; ciclo++) {
       const td = document.createElement("td");
-      const valor = celdas[ciclo];
 
-      td.textContent = valor || "—";
+      const celda = filaGantt.ciclos.find(
+        (item) => item.ciclo === ciclo
+      );
 
-      if (valor) {
-        td.classList.add(
-          obtenerClaseEtapa(valor)
-        );
+      if (celda) {
+        td.textContent = celda.etapa;
+        td.classList.add(obtenerClaseEtapa(celda.etapa));
       } else {
+        td.textContent = "—";
         td.classList.add("etapa-vacia");
       }
 
@@ -777,30 +835,21 @@ function generarGantt(
     }
 
     cuerpo.appendChild(fila);
-
-    retrasoAcumulado += stalls;
-
-    if (salto && !salto.acierto) {
-      retrasoAcumulado +=
-        configuracion.penalizacionControl;
-    }
   });
 
-  if (ciclosReales > ciclosVisibles) {
-    const filaAviso = document.createElement("tr");
-    const celdaAviso = document.createElement("td");
+  if (simulacion.totalCiclos > 60) {
+    const fila = document.createElement("tr");
+    const td = document.createElement("td");
 
-    celdaAviso.colSpan = ciclosVisibles + 1;
-    celdaAviso.textContent =
-      `Se muestran los primeros ${ciclosVisibles} de ${ciclosReales} ciclos.`;
+    td.colSpan = totalCiclos + 1;
+    td.textContent =
+      `Se muestran los primeros 60 ciclos de ${simulacion.totalCiclos}.`;
 
-    celdaAviso.className = "gantt-aviso";
-    filaAviso.appendChild(celdaAviso);
-    cuerpo.appendChild(filaAviso);
+    fila.appendChild(td);
+    cuerpo.appendChild(fila);
   }
 }
-
-
+ 
 function generarNombresEtapas(cantidadEtapas) {
   if (cantidadEtapas === 5) {
     return ["IF", "ID", "EX", "MEM", "WB"];
@@ -832,75 +881,6 @@ function generarNombresEtapas(cantidadEtapas) {
 }
 
 
-function colocarEtapasEnGantt(
-  celdas,
-  cicloInicio,
-  etapas,
-  stalls,
-  instruccion,
-  salto
-) {
-  let posicion = cicloInicio - 1;
-
-  if (posicion < celdas.length) {
-    celdas[posicion] = etapas[0] || "IF";
-  }
-
-  posicion++;
-
-  if (posicion < celdas.length) {
-    celdas[posicion] = etapas[1] || "ID";
-  }
-
-  posicion++;
-
-  for (let i = 0; i < stalls; i++) {
-    if (posicion < celdas.length) {
-      celdas[posicion] = "STALL";
-    }
-
-    posicion++;
-  }
-
-  /*
-   * Los saltos se consideran resueltos en EX.
-   */
-  if (instruccion.esSalto) {
-    if (posicion < celdas.length) {
-      celdas[posicion] = "EX";
-    }
-
-    posicion++;
-
-    if (salto && !salto.acierto) {
-      for (
-        let i = 0;
-        i < salto.ciclosFlush;
-        i++
-      ) {
-        if (posicion < celdas.length) {
-          celdas[posicion] = "FLUSH";
-        }
-
-        posicion++;
-      }
-    }
-
-    return;
-  }
-
-  for (
-    let etapa = 2;
-    etapa < etapas.length;
-    etapa++
-  ) {
-    if (posicion < celdas.length) {
-      celdas[posicion] = etapas[etapa];
-    }
-
-    posicion++;
-  }
-}
 
 
 function obtenerClaseEtapa(etapa) {
