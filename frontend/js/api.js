@@ -11,13 +11,12 @@ async function postData(endpoint, data) {
     });
 
     if (!response.ok) {
-      throw new Error("Error HTTP: " + response.status);
+      throw new Error("Error en la respuesta del backend");
     }
 
     return await response.json();
-
   } catch (error) {
-    console.warn("Backend no disponible. Usando simulación local.", error);
+    console.error("Error conectando con backend:", error);
     return null;
   }
 }
@@ -27,13 +26,12 @@ async function getData(endpoint) {
     const response = await fetch(`${API_URL}${endpoint}`);
 
     if (!response.ok) {
-      throw new Error("Error HTTP: " + response.status);
+      throw new Error("Error en la respuesta del backend");
     }
 
     return await response.json();
-
   } catch (error) {
-    console.warn("Backend no disponible. Usando datos locales.", error);
+    console.error("Error conectando con backend:", error);
     return null;
   }
 }
