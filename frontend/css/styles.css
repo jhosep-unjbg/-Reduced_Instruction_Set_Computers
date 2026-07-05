@@ -798,3 +798,85 @@ body[data-page="pipeline-avanzado"] #tablaPredictor td:last-child {
 .btn.danger:hover{
     background:linear-gradient(135deg,#ef4444,#dc2626);
 }
+/* =========================================================
+   COLORES DEL GANTT - PIPELINE AVANZADO
+========================================================= */
+
+body[data-page="pipeline-avanzado"] #tablaGantt td {
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+body[data-page="pipeline-avanzado"] #tablaGantt td:not(.etapa-vacia):hover {
+  transform: scale(1.05);
+  filter: brightness(1.12);
+}
+
+body[data-page="pipeline-avanzado"] .etapa-if {
+  background: rgba(59, 130, 246, 0.22);
+  color: #60a5fa;
+}
+
+body[data-page="pipeline-avanzado"] .etapa-id {
+  background: rgba(139, 92, 246, 0.22);
+  color: #a78bfa;
+}
+
+body[data-page="pipeline-avanzado"] .etapa-ex {
+  background: rgba(16, 185, 129, 0.22);
+  color: #34d399;
+}
+
+body[data-page="pipeline-avanzado"] .etapa-mem {
+  background: rgba(245, 158, 11, 0.22);
+  color: #fbbf24;
+}
+
+body[data-page="pipeline-avanzado"] .etapa-wb {
+  background: rgba(6, 182, 212, 0.22);
+  color: #22d3ee;
+}
+
+body[data-page="pipeline-avanzado"] .etapa-stall {
+  background: rgba(239, 68, 68, 0.25);
+  color: #f87171;
+}
+
+body[data-page="pipeline-avanzado"] .etapa-flush {
+  background: rgba(236, 72, 153, 0.25);
+  color: #f472b6;
+}
+
+body[data-page="pipeline-avanzado"] .etapa-vacia {
+  color: #475569;
+}
+
+body[data-page="pipeline-avanzado"] .gantt-instruccion {
+  min-width: 130px;
+  text-align: left !important;
+  color: #e2e8f0;
+}
+
+body[data-page="pipeline-avanzado"] .predictor-acierto {
+  color: #34d399;
+  font-weight: 700;
+}
+
+body[data-page="pipeline-avanzado"] .predictor-fallo {
+  color: #f87171;
+  font-weight: 700;
+}
+
+body[data-page="pipeline-avanzado"] .observation-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+body[data-page="pipeline-avanzado"] .observation-list li {
+  margin-bottom: 10px;
+}
+
+body[data-page="pipeline-avanzado"] .mensaje-error {
+  margin: 0;
+  color: #f87171;
+  font-weight: 600;
+}
