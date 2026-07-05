@@ -15,6 +15,9 @@
 #include "services/Ciscservice.h"
 #include "models/Comparacionpipeline.h"
 #include "services/Comparacionpipelineservice.h"
+#include "services/Archivoservice.h"
+#include <fstream>
+#include <sstream>
 
 void agregarCors(crow::response& res) {
     res.add_header("Access-Control-Allow-Origin", "*");
@@ -82,6 +85,16 @@ void iniciarServidor() {
         json["ciclos"] = resultado.getCiclos();
         json["tiempoTotal"] = resultado.getTiempoTotal();
         json["speedup"] = resultado.getSpeedup();
+        ArchivoService archivo;
+archivo.guardarHistorialGeneral(
+    "Pipeline",
+    "k=" + std::to_string(k) +
+    "; n=" + std::to_string(n) +
+    "; tau=" + std::to_string(tau),
+    "ciclos=" + std::to_string(resultado.getCiclos()) +
+    "; tiempo=" + std::to_string(resultado.getTiempoTotal()) +
+    "; speedup=" + std::to_string(resultado.getSpeedup())
+);
 
         crow::response res(200, json);
         agregarCors(res);
@@ -413,6 +426,58 @@ comparacion.setTau(tau);
     json["eficiencia"] = eficiencia;
 
     crow::response res(200, json);
+    agregarCors(res);
+    return res;
+});
+CROW_ROUTE(app, "/api/historial").methods("GET"_method)
+([]() {
+    std::ifstream archivo("data/historial_general.csv");
+
+    crow::json::wvalue respuesta;
+    respuesta["historial"] = crow::json::wvalue::list();
+
+    if (!archivo.is_open()) {
+        crow::response res(200, respuesta);
+        agregarCors(res);
+        return res;
+    }
+
+    std::string linea;
+    getline(archivo, linea);
+
+    int index = 0;
+
+    while (getline(archivo, linea)) {
+        if (linea.empty()) continue;
+
+        std::stringstream ss(linea);
+
+        std::string id, modulo, parametros, resultado, fecha;
+
+        getline(ss, id, ',');
+        getline(ss, modulo, ',');
+        getline(ss, parametros, ',');
+        getline(ss, resultado, ',');
+        getline(ss, fecha);
+
+        auto limpiar = [](std::string texto) {
+            if (!texto.empty() && texto.front() == '"') texto.erase(0, 1);
+            if (!texto.empty() && texto.back() == '"') texto.pop_back();
+            return texto;
+        };
+
+        respuesta["historial"][index]["id"] = limpiar(id);
+        respuesta["historial"][index]["modulo"] = limpiar(modulo);
+        respuesta["historial"][index]["parametros"] = limpiar(parametros);
+        respuesta["historial"][index]["resultado"] = limpiar(resultado);
+        respuesta["historial"][index]["fecha"] = limpiar(fecha);
+
+        index++;
+    }
+
+    archivo.close();
+
+    crow::response res(200, respuesta);
     agregarCors(res);
     return res;
 });

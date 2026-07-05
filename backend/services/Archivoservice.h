@@ -42,6 +42,11 @@ public:
     int forwarding,
     int flush
 );
+void guardarHistorialGeneral(
+    std::string modulo,
+    std::string parametros,
+    std::string resultado
+);
 };
 
 #endif

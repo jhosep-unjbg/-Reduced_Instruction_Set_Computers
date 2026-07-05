@@ -252,3 +252,58 @@ void ArchivoService::guardarResultadoPipelineJSON(
 
     cout << "Resultado JSON guardado correctamente.\n";
 }
+#include <ctime>
+#include <iomanip>
+#include <sstream>
+
+void ArchivoService::guardarHistorialGeneral(
+    string modulo,
+    string parametros,
+    string resultado
+) {
+    string ruta = "data/historial_general.csv";
+
+    bool existe = filesystem::exists(ruta);
+
+    int id = 1;
+
+    if (existe) {
+        ifstream leer(ruta);
+        string linea;
+
+        getline(leer, linea);
+
+        while (getline(leer, linea)) {
+            if (!linea.empty()) {
+                id++;
+            }
+        }
+
+        leer.close();
+    }
+
+    time_t ahora = time(nullptr);
+    tm* tiempo = localtime(&ahora);
+
+    stringstream fecha;
+    fecha << put_time(tiempo, "%Y-%m-%d %H:%M:%S");
+
+    ofstream archivo(ruta, ios::app);
+
+    if (!archivo.is_open()) {
+        cout << "Error al abrir historial_general.csv" << endl;
+        return;
+    }
+
+    if (!existe) {
+        archivo << "ID,Modulo,Parametros,Resultado,Fecha\n";
+    }
+
+    archivo << id << ","
+            << "\"" << modulo << "\","
+            << "\"" << parametros << "\","
+            << "\"" << resultado << "\","
+            << "\"" << fecha.str() << "\"\n";
+
+    archivo.close();
+}
