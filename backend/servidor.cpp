@@ -13,6 +13,8 @@
 #include "services/Riscservice.h"
 #include "models/Cisc.h"
 #include "services/Ciscservice.h"
+#include "models/Comparacionpipeline.h"
+#include "services/Comparacionpipelineservice.h"
 
 void agregarCors(crow::response& res) {
     res.add_header("Access-Control-Allow-Origin", "*");
@@ -373,5 +375,46 @@ CROW_ROUTE(app, "/api/pipeline-avanzado").methods("POST"_method)
     return res;
 });
 
+CROW_ROUTE(app, "/api/comparacion-pipeline").methods("POST"_method)
+([](const crow::request& req) {
+    auto body = crow::json::load(req.body);
+
+    if (!body) {
+        crow::response res(400, "{\"error\":\"JSON invalido\"}");
+        agregarCors(res);
+        return res;
+    }
+
+    int k = body["k"].i();
+    int n = body["n"].i();
+    double tau = body["tau"].d();
+
+    ComparacionPipeline comparacion;
+comparacion.setK(k);
+comparacion.setN(n);
+comparacion.setTau(tau);
+    ComparacionPipelineService service;
+
+    ComparacionPipeline resultado = service.calcular(comparacion);
+
+    double eficiencia = 0.0;
+    if (k > 0) {
+        eficiencia = (resultado.getSpeedup() / k) * 100.0;
+    }
+
+    crow::json::wvalue json;
+    json["ciclosPipeline"] = resultado.getCiclosPipeline();
+    json["tiempoPipeline"] = resultado.getTiempoPipeline();
+    json["ciclosMonociclo"] = resultado.getCiclosMonociclo();
+    json["tiempoMonociclo"] = resultado.getTiempoMonociclo();
+    json["speedup"] = resultado.getSpeedup();
+    json["ahorroTiempo"] = resultado.getAhorroTiempo();
+    json["porcentajeMejora"] = resultado.getPorcentajeMejora();
+    json["eficiencia"] = eficiencia;
+
+    crow::response res(200, json);
+    agregarCors(res);
+    return res;
+});
     app.port(18080).multithreaded().run();
 }

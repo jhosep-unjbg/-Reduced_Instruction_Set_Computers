@@ -1,12 +1,12 @@
-function inicializarComparacionPipeline() {
-  compararPipelineMonociclo();
+async function inicializarComparacionPipeline() {
+  await compararPipelineMonociclo();
 
   document
     .getElementById("btnCompararPipeline")
     ?.addEventListener("click", compararPipelineMonociclo);
 }
 
-function compararPipelineMonociclo() {
+async function compararPipelineMonociclo() {
   const k = Number(document.getElementById("cmpK").value);
   const n = Number(document.getElementById("cmpN").value);
   const tau = Number(document.getElementById("cmpTau").value);
@@ -16,14 +16,23 @@ function compararPipelineMonociclo() {
     return;
   }
 
-  const ciclosPipeline = k + (n - 1);
-  const ciclosMonociclo = n * k;
+  const resultado = await postData("/api/comparacion-pipeline", {
+    k,
+    n,
+    tau
+  });
 
-  const tiempoPipeline = ciclosPipeline * tau;
-  const tiempoMonociclo = ciclosMonociclo * tau;
+  if (!resultado) {
+    alert("No se pudo conectar con el backend Crow.");
+    return;
+  }
 
-  const speedup = tiempoMonociclo / tiempoPipeline;
-  const eficiencia = (speedup / k) * 100;
+  const ciclosPipeline = resultado.ciclosPipeline;
+  const ciclosMonociclo = resultado.ciclosMonociclo;
+  const tiempoPipeline = resultado.tiempoPipeline;
+  const tiempoMonociclo = resultado.tiempoMonociclo;
+  const speedup = resultado.speedup;
+  const eficiencia = resultado.eficiencia;
 
   document.getElementById("cmpPipeCiclos").textContent = ciclosPipeline;
   document.getElementById("cmpMonoCiclos").textContent = ciclosMonociclo;
@@ -40,7 +49,7 @@ function compararPipelineMonociclo() {
     "Pipeline reduce el tiempo total frente al modelo no segmentado.";
 
   document.getElementById("resultadoPipelineMono").textContent =
-    `Para ${n} instrucciones, Pipeline logra un speedup de ${speedup.toFixed(2)}x.`;
+    `Para ${n} instrucciones, Pipeline logra un speedup de ${speedup.toFixed(2)}x y ahorra ${resultado.ahorroTiempo.toFixed(2)} ns.`;
 
   dibujarGraficoPipelineMonociclo(k, n, tau);
 }
