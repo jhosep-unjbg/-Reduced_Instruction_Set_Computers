@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pipeline vs Monociclo | CPU Simulator</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body data-page="comparacion-pipeline">
+
+<div id="sidebar-container"></div>
+
+<main class="main">
+
+  <header class="topbar">
+    <div>
+      <h1>Comparación Pipeline vs Monociclo</h1>
+      <p>Análisis de rendimiento entre ejecución segmentada y no segmentada</p>
+    </div>
+
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="btn-secondary" onclick="window.location.href='../index.html'">
+        🏠 Inicio
+      </button>
+      <span class="badge">Rendimiento</span>
+    </div>
+  </header>
+
+  <section class="stats">
+    <div class="stat-box">
+      <h3 id="cmpPipeCiclos">-</h3>
+      <p>Ciclos Pipeline</p>
+    </div>
+
+    <div class="stat-box">
+      <h3 id="cmpMonoCiclos">-</h3>
+      <p>Ciclos Monociclo</p>
+    </div>
+
+    <div class="stat-box">
+      <h3 id="cmpSpeedup">-</h3>
+      <p>Speedup</p>
+    </div>
+
+    <div class="stat-box">
+      <h3 id="cmpEficiencia">-</h3>
+      <p>Eficiencia</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Datos de entrada</h2>
+
+      <button class="btn-primary" id="btnCompararPipeline">
+        Comparar
+      </button>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Número de etapas (k)</label>
+        <input type="number" id="cmpK" value="5">
+      </div>
+
+      <div class="form-group">
+        <label>Número de instrucciones (n)</label>
+        <input type="number" id="cmpN" value="20">
+      </div>
+
+      <div class="form-group">
+        <label>Tiempo de ciclo τ (ns)</label>
+        <input type="number" id="cmpTau" value="2">
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Gráfico X-Y: Instrucciones vs Tiempo</h2>
+    <canvas id="graficoPipelineMonociclo" width="800" height="420"></canvas>
+  </section>
+
+  <section class="panel">
+    <h2>Resultados detallados</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Métrica</th>
+          <th>Pipeline</th>
+          <th>Monociclo</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>Ciclos</td>
+          <td id="tablaPipeCiclos">-</td>
+          <td id="tablaMonoCiclos">-</td>
+        </tr>
+
+        <tr>
+          <td>Tiempo</td>
+          <td id="tablaPipeTiempo">-</td>
+          <td id="tablaMonoTiempo">-</td>
+        </tr>
+
+        <tr>
+          <td>Fórmula</td>
+          <td>k + (n - 1)</td>
+          <td>n × k</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="panel">
+    <h2>Conclusión automática</h2>
+
+    <div class="result-card">
+      <p>Resultado del análisis</p>
+      <h3 id="conclusionPipelineMono">Esperando comparación...</h3>
+      <strong id="resultadoPipelineMono">Ejecute el análisis.</strong>
+    </div>
+  </section>
+
+</main>
+
+<script src="../js/api.js"></script>
+<script src="../js/layout.js"></script>
+<script src="../js/comparacionPipeline.js"></script>
+<script src="../js/app.js"></script>
+
+</body>
+</html>

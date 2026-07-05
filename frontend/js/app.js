@@ -20,4 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (document.body.dataset.page === "comparacion") {
     inicializarComparacion();
   }
+  if (document.body.dataset.page === "comparacion-pipeline") {
+  inicializarComparacionPipeline();
+}
 });
