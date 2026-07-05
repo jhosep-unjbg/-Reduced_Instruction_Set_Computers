@@ -1,0 +1,8 @@
+{
+  "liveServer.settings.ignoreFiles": [
+    "**/*.csv",
+    "**/backend/data/**",
+    "**/data/**"
+  ],
+  "liveServer.settings.wait": 1000
+}
