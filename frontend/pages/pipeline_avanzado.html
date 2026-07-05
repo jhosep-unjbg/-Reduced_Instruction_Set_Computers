@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pipeline Avanzado | CPU Simulator</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body data-page="pipeline-avanzado">
+
+<div id="sidebar-container"></div>
+
+<main class="main">
+
+  <header class="topbar">
+    <div>
+      <h1>Pipeline Avanzado</h1>
+      <p>Forwarding, hazards, stalls, flush y predictor de saltos</p>
+    </div>
+    <span class="badge">Segmentado Real</span>
+  </header>
+
+  <section class="stats">
+    <div class="stat-box">
+      <h3 id="statCiclosIdeales">0</h3>
+      <p>Ciclos ideales</p>
+    </div>
+
+    <div class="stat-box">
+      <h3 id="statCiclosReales">0</h3>
+      <p>Ciclos reales</p>
+    </div>
+
+    <div class="stat-box">
+      <h3 id="statCPI">0.00</h3>
+      <p>CPI efectivo</p>
+    </div>
+
+    <div class="stat-box">
+      <h3 id="statThroughput">0.0000</h3>
+      <p>Throughput</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Configuración de simulación</h2>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="cantidadInstrucciones">Cantidad de instrucciones</label>
+        <input type="number" id="cantidadInstrucciones" value="5" min="1">
+      </div>
+
+      <div class="form-group">
+        <label for="etapasPipeline">Número de etapas</label>
+        <input type="number" id="etapasPipeline" value="5" min="1">
+      </div>
+
+      <div class="form-group">
+        <label for="tiempoCiclo">Tiempo de ciclo</label>
+        <input type="number" id="tiempoCiclo" value="2" min="0" step="0.1">
+      </div>
+
+      <div class="form-group">
+        <label for="unidadTiempo">Unidad</label>
+        <select id="unidadTiempo">
+          <option value="ns">ns</option>
+          <option value="ps">ps</option>
+          <option value="ms">ms</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="forwarding">Forwarding</label>
+        <select id="forwarding">
+          <option value="true">Activado</option>
+          <option value="false">Desactivado</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="penalizacionDatos">Penalización por datos</label>
+        <input type="number" id="penalizacionDatos" value="2" min="0">
+      </div>
+
+      <div class="form-group">
+        <label for="penalizacionControl">Penalización por control</label>
+        <input type="number" id="penalizacionControl" value="2" min="0">
+      </div>
+
+      <div class="form-group">
+        <label for="estadoPredictor">Estado inicial predictor</label>
+        <select id="estadoPredictor">
+          <option value="ST">Strong Taken</option>
+          <option value="WT">Weak Taken</option>
+          <option value="WNT">Weak Not Taken</option>
+          <option value="SNT">Strong Not Taken</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn primary" onclick="ejecutarPipelineAvanzado()">Ejecutar</button>
+      <button class="btn secondary" onclick="limpiarPipelineAvanzado()">Limpiar</button>
+      <button class="btn danger" onclick="reiniciarPipelineAvanzado()">Reiniciar</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Programa de instrucciones</h2>
+    <p class="muted">
+      Formato sugerido: ADD R1,R2,R3 | LW R1,0(R2) | SW R1,0(R2) | BEQ R1,R2,L1 T | BNE R1,R2,L2 N | J L3 T
+    </p>
+
+    <div class="code-box">
+      <textarea id="instruccionesPipelineAvanzado" rows="8">ADD R1,R2,R3
+BEQ R1,R2,L1 T
+ADD R4,R5,R6
+BNE R4,R7,L2 N
+J L3 T</textarea>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Resultados generales</h2>
+
+    <div class="result-grid">
+      <div class="result-card">
+        <span>Stalls</span>
+        <strong id="resStalls">0</strong>
+      </div>
+
+      <div class="result-card">
+        <span>Flushes</span>
+        <strong id="resFlushes">0</strong>
+      </div>
+
+      <div class="result-card">
+        <span>Tiempo total</span>
+        <strong id="resTiempoTotal">0 ns</strong>
+      </div>
+
+      <div class="result-card">
+        <span>Precisión predictor</span>
+        <strong id="resPrecision">0%</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Diagrama de tiempos / Gantt</h2>
+    <div class="table-container">
+      <table id="tablaGantt">
+        <thead id="ganttHead"></thead>
+        <tbody id="ganttBody">
+          <tr>
+            <td colspan="10">Ejecuta la simulación para generar la carta de tiempos.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel two-columns">
+    <div>
+      <h2>Historial del predictor</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Instrucción</th>
+              <th>Estado</th>
+              <th>Predicción</th>
+              <th>Resultado</th>
+              <th>Evaluación</th>
+            </tr>
+          </thead>
+          <tbody id="tablaPredictor">
+            <tr>
+              <td colspan="5">Sin datos.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div>
+      <h2>Observaciones</h2>
+      <div id="observacionesPipelineAvanzado" class="observation-box">
+        Ejecuta la simulación para ver riesgos, stalls, flushes y predicción de saltos.
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Resumen técnico</h2>
+
+    <div class="architecture-box">
+      <div>
+        <h3>Pipeline ideal</h3>
+        <p>Ciclos = k + (n - 1)</p>
+      </div>
+
+      <div>
+        <h3>Pipeline real</h3>
+        <p>Ciclos = k + (n - 1) + stalls + flushes</p>
+      </div>
+
+      <div>
+        <h3>CPI efectivo</h3>
+        <p>CPI = ciclos reales / instrucciones</p>
+      </div>
+
+      <div>
+        <h3>Throughput</h3>
+        <p>Throughput = instrucciones / ciclos reales</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="../js/api.js"></script>
+<script src="../js/layout.js"></script>
+<script src="../js/pipelineAvanzado.js"></script>
+<script src="../js/app.js"></script>
+
+</body>
+</html>
