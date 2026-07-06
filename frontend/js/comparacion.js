@@ -36,10 +36,10 @@ async function analizarComparacion(event) {
     return;
   }
 
-  pintarComparacion(respuesta);
+  pintarComparacion(respuesta, datos);
 }
 
-function pintarComparacion(datos) {
+function pintarComparacion(datos, entrada) {
   const risc = datos.risc;
   const cisc = datos.cisc;
 
@@ -87,6 +87,7 @@ function pintarComparacion(datos) {
   document.getElementById("resultadoComparacion").textContent =
     `Resultado con los datos ingresados: ${risc.resultado}`;
   dibujarGraficoXY(risc, cisc);
+pintarEjecucionDinamica(entrada);
   }
 
 function pintarCodigoComparacion() {
@@ -162,4 +163,98 @@ function dibujarGraficoXY(risc, cisc) {
 
   punto("RISC", risc.instrucciones, risc.memoria, "#38bdf8");
   punto("CISC", cisc.instrucciones, cisc.memoria, "#22c55e");
+}
+function pintarEjecucionDinamica(datos) {
+
+    const suma = datos.A + datos.B;
+    const resta = datos.C - datos.D;
+    const resultado = suma * resta;
+
+    const pasos = [
+        { paso: 1, operacion: "Carga A", valor: datos.A },
+        { paso: 2, operacion: "A + B", valor: suma },
+        { paso: 3, operacion: "Carga C", valor: datos.C },
+        { paso: 4, operacion: "C - D", valor: resta },
+        { paso: 5, operacion: "Resultado", valor: resultado }
+    ];
+
+    const tabla = document.getElementById("tablaEjecucionComparacion");
+
+    tabla.innerHTML = "";
+
+    pasos.forEach(p => {
+
+        tabla.innerHTML += `
+        <tr>
+            <td>${p.paso}</td>
+            <td>${p.operacion}</td>
+            <td>${p.valor}</td>
+            <td>${p.valor}</td>
+        </tr>
+        `;
+
+    });
+
+    dibujarGraficoEjecucion(pasos);
+
+}
+function dibujarGraficoEjecucion(pasos){
+
+    const canvas =
+        document.getElementById("graficoEjecucionComparacion");
+
+    if(!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    const padding = 60;
+
+    const max =
+        Math.max(...pasos.map(p=>p.valor))+5;
+
+    function X(i){
+
+        return padding+
+            (i/(pasos.length-1))*
+            (canvas.width-padding*2);
+
+    }
+
+    function Y(v){
+
+        return canvas.height-padding-
+            (v/max)*
+            (canvas.height-padding*2);
+
+    }
+
+    ctx.beginPath();
+
+    pasos.forEach((p,i)=>{
+
+        if(i===0)
+            ctx.moveTo(X(i),Y(p.valor));
+        else
+            ctx.lineTo(X(i),Y(p.valor));
+
+    });
+
+    ctx.lineWidth=3;
+    ctx.strokeStyle="#22c55e";
+    ctx.stroke();
+
+    pasos.forEach((p,i)=>{
+
+        ctx.beginPath();
+        ctx.arc(X(i),Y(p.valor),7,0,Math.PI*2);
+        ctx.fillStyle="#38bdf8";
+        ctx.fill();
+
+        ctx.fillStyle="#fff";
+        ctx.fillText(p.valor,X(i)+8,Y(p.valor)-8);
+
+    });
+
 }
