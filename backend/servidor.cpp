@@ -235,8 +235,20 @@ CROW_ROUTE(app, "/api/cisc").methods("POST"_method)
 
     Cisc cisc(A, B, C, D);
     CiscService service;
-
     Cisc resultado = service.calcular(cisc);
+
+    ArchivoService archivo;
+    archivo.guardarHistorialGeneral(
+        "CISC",
+        "A=" + std::to_string(A) +
+        "; B=" + std::to_string(B) +
+        "; C=" + std::to_string(C) +
+        "; D=" + std::to_string(D),
+        "Resultado=" + std::to_string(resultado.getResultado()) +
+        "; Instrucciones=" + std::to_string(resultado.getNumeroInstrucciones()) +
+        "; AccesosMemoria=" + std::to_string(resultado.getAccesosMemoria()) +
+        "; OperacionesALU=" + std::to_string(resultado.getOperacionesAlu())
+    );
 
     crow::json::wvalue json;
     json["A"] = A;
@@ -255,6 +267,13 @@ CROW_ROUTE(app, "/api/cisc").methods("POST"_method)
 });
 CROW_ROUTE(app, "/api/comparacion-risc-cisc").methods("GET"_method)
 ([]() {
+    ArchivoService archivo;
+    archivo.guardarHistorialGeneral(
+        "Comparacion RISC-CISC",
+        "Modelo=RISC vs CISC",
+        "RISC instrucciones=9; CISC instrucciones=6; Resultado=100"
+    );
+
     crow::json::wvalue json;
 
     json["risc"]["instrucciones"] = 9;
@@ -264,7 +283,7 @@ CROW_ROUTE(app, "/api/comparacion-risc-cisc").methods("GET"_method)
     json["risc"]["resultado"] = 100;
 
     json["cisc"]["instrucciones"] = 6;
-    json["cisc"]["memoria"] = 4;
+    json["cisc"]["memoria"] = 5;
     json["cisc"]["complejidad"] = 90;
     json["cisc"]["pipeline"] = 65;
     json["cisc"]["resultado"] = 100;
@@ -415,6 +434,20 @@ CROW_ROUTE(app, "/api/pipeline-avanzado").methods("POST"_method)
     double precision = (aciertos + fallos) > 0
         ? ((double)aciertos / (aciertos + fallos)) * 100.0
         : 0.0;
+    ArchivoService archivo;
+    archivo.guardarHistorialGeneral(
+    "Pipeline Avanzado",
+    "Etapas=" + std::to_string(etapas) +
+    "; Instrucciones=" + std::to_string(n) +
+    "; Forwarding=" + std::string(forwarding ? "SI" : "NO") +
+    "; Predictor=" + estadoPredictor,
+    "CiclosIdeales=" + std::to_string(ciclosIdeales) +
+    "; CiclosReales=" + std::to_string(ciclosReales) +
+    "; Stalls=" + std::to_string(stalls) +
+    "; Flushes=" + std::to_string(flushes) +
+    "; CPI=" + std::to_string(cpi) +
+    "; Precision=" + std::to_string(precision)
+);
 
     crow::json::wvalue json;
     json["ciclosIdeales"] = ciclosIdeales;
@@ -459,7 +492,17 @@ comparacion.setTau(tau);
     if (k > 0) {
         eficiencia = (resultado.getSpeedup() / k) * 100.0;
     }
-
+    ArchivoService archivo;
+archivo.guardarHistorialGeneral(
+    "Comparacion Pipeline",
+    "k=" + std::to_string(k) +
+    "; n=" + std::to_string(n) +
+    "; tau=" + std::to_string(tau),
+    "Pipeline ciclos=" + std::to_string(resultado.getCiclosPipeline()) +
+    "; Monociclo ciclos=" + std::to_string(resultado.getCiclosMonociclo()) +
+    "; Speedup=" + std::to_string(resultado.getSpeedup()) +
+    "; Mejora=" + std::to_string(resultado.getPorcentajeMejora())
+);
     crow::json::wvalue json;
     json["ciclosPipeline"] = resultado.getCiclosPipeline();
     json["tiempoPipeline"] = resultado.getTiempoPipeline();
