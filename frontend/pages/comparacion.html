@@ -2,9 +2,9 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Comparación | CPU Simulator</title>
-    <link rel="stylesheet" href="../css/styles.css">
+  <meta charset="UTF-8">
+  <title>Comparación | CPU Simulator</title>
+  <link rel="stylesheet" href="../css/styles.css">
 </head>
 
 <body data-page="comparacion">
@@ -13,386 +13,320 @@
 
 <main class="main">
 
-<header class="topbar">
+  <header class="topbar">
     <div>
-        <h1>Comparación RISC vs CISC</h1>
-        <p>Análisis visual de instrucciones, memoria, complejidad y eficiencia</p>
+      <h1>Comparación RISC vs CISC</h1>
+      <p>Análisis estructural y dinámico usando A, B, C y D</p>
     </div>
 
     <div style="display:flex;gap:10px;align-items:center;">
+      <button
+        type="button"
+        class="btn-secondary"
+        onclick="window.location.href='../index.html'">
+        Regresar
+      </button>
 
-        <button
-            type="button"
-            class="btn-secondary"
-            onclick="window.location.href='../index.html'">
-            Regresar
-        </button>
-
-        <span class="badge">Análisis</span>
-
+      <span class="badge">Análisis</span>
     </div>
-</header>
+  </header>
 
-<section class="stats">
-
+  <section class="stats">
     <div class="stat-box">
-        <h3 id="cmpInstr">-</h3>
-        <p>Instrucciones</p>
+      <h3 id="cmpInstr">-</h3>
+      <p>Instrucciones</p>
     </div>
 
     <div class="stat-box">
-        <h3 id="cmpMem">-</h3>
-        <p>Accesos memoria</p>
+      <h3 id="cmpMem">-</h3>
+      <p>Accesos memoria</p>
     </div>
 
     <div class="stat-box">
-        <h3 id="cmpPipe">-</h3>
-        <p>Mejor Pipeline</p>
+      <h3 id="cmpPipe">-</h3>
+      <p>Mejor Pipeline</p>
     </div>
 
     <div class="stat-box">
-        <h3 id="cmpCodigo">-</h3>
-        <p>Código más compacto</p>
+      <h3 id="cmpCodigo">-</h3>
+      <p>Código más compacto</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Datos de entrada</h2>
+
+      <button type="button" class="btn-primary" id="btnAnalizarComparacion">
+        Analizar
+      </button>
     </div>
 
-</section>
-
-<!-- DATOS -->
-
-<section class="panel">
-
-<div class="panel-header">
-
-<h2>Datos de entrada</h2>
-
-<button
-type="button"
-class="btn-primary"
-id="btnAnalizarComparacion">
-
-Analizar
-
-</button>
-
-</div>
-
-<div class="form-grid">
-
-<div class="form-group">
-<label>A</label>
-<input
-type="number"
-id="inputA_Comparacion"
-value="12">
-</div>
-
-<div class="form-group">
-<label>B</label>
-<input
-type="number"
-id="inputB_Comparacion"
-value="8">
-</div>
-
-<div class="form-group">
-<label>C</label>
-<input
-type="number"
-id="inputC_Comparacion"
-value="15">
-</div>
-
-<div class="form-group">
-<label>D</label>
-<input
-type="number"
-id="inputD_Comparacion"
-value="10">
-</div>
-
-</div>
-
-</section>
-
-<section class="grid-2">
-
-<div class="panel">
-
-<h2>Arquitectura RISC</h2>
-
-<div
-class="code-box"
-id="codigoRiscComparacion">
-
-</div>
-
-</div>
-
-<div class="panel">
-
-<h2>Arquitectura CISC</h2>
-
-<div
-class="code-box"
-id="codigoCiscComparacion">
-
-</div>
-
-</div>
-
-</section>
-
-<section class="panel">
-
-<div class="panel-header">
-
-<h2>Gráficos comparativos</h2>
-
-</div>
-
-<div class="charts-grid">
-
-<div class="chart-card">
-
-<h3>Número de instrucciones</h3>
-
-<div class="bar-row">
-
-<span>RISC</span>
-
-<div class="bar-track">
-<div class="bar-fill" id="barRiscInstr"></div>
-</div>
-
-<strong id="txtRiscInstr">0</strong>
-
-</div>
-
-<div class="bar-row">
-
-<span>CISC</span>
-
-<div class="bar-track">
-<div class="bar-fill" id="barCiscInstr"></div>
-</div>
-
-<strong id="txtCiscInstr">0</strong>
-
-</div>
-
-</div>
-
-<div class="chart-card">
-
-<h3>Accesos memoria</h3>
-
-<div class="bar-row">
-
-<span>RISC</span>
-
-<div class="bar-track">
-<div class="bar-fill" id="barRiscMem"></div>
-</div>
-
-<strong id="txtRiscMem">0</strong>
-
-</div>
-
-<div class="bar-row">
-
-<span>CISC</span>
-
-<div class="bar-track">
-<div class="bar-fill" id="barCiscMem"></div>
-</div>
-
-<strong id="txtCiscMem">0</strong>
-
-</div>
-
-</div>
-
-<div class="chart-card">
-
-<h3>Complejidad hardware</h3>
-
-<div class="bar-row">
-
-<span>RISC</span>
-
-<div class="bar-track">
-<div class="bar-fill" id="barRiscComp"></div>
-</div>
-
-<strong>Baja</strong>
-
-</div>
-
-<div class="bar-row">
-
-<span>CISC</span>
-
-<div class="bar-track">
-<div class="bar-fill" id="barCiscComp"></div>
-</div>
-
-<strong>Alta</strong>
-
-</div>
-
-</div>
-
-<div class="chart-card">
-
-<h3>Compatibilidad Pipeline</h3>
-
-<div class="bar-row">
-
-<span>RISC</span>
-
-<div class="bar-track">
-<div class="bar-fill" id="barRiscPipe"></div>
-</div>
-
-<strong>Alta</strong>
-
-</div>
-
-<div class="bar-row">
-
-<span>CISC</span>
-
-<div class="bar-track">
-<div class="bar-fill" id="barCiscPipe"></div>
-</div>
-
-<strong>Media</strong>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-<section class="panel">
-
-<h2>Gráfico X-Y: Instrucciones vs Memoria</h2>
-
-<canvas
-id="graficoXYComparacion"
-width="700"
-height="360">
-
-</canvas>
-
-</section>
-<section class="panel">
-  <h2>Gráfico dinámico de ejecución</h2>
-  <p style="color:#94a3b8;margin-bottom:15px;">
-    Muestra cómo RISC y CISC llegan al resultado usando A, B, C y D.
-  </p>
-
-  <canvas id="graficoEjecucionComparacion" width="700" height="360"></canvas>
-</section>
-
-<section class="panel">
-  <h2>Ejecución paso a paso</h2>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Paso</th>
-        <th>Operación</th>
-        <th>RISC</th>
-        <th>CISC</th>
-      </tr>
-    </thead>
-
-    <tbody id="tablaEjecucionComparacion"></tbody>
-  </table>
-</section>
-
-<section class="panel">
-
-<h2>Tabla comparativa</h2>
-
-<table>
-
-<thead>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>A</label>
+        <input type="number" id="inputA_Comparacion" value="12">
+      </div>
+
+      <div class="form-group">
+        <label>B</label>
+        <input type="number" id="inputB_Comparacion" value="8">
+      </div>
+
+      <div class="form-group">
+        <label>C</label>
+        <input type="number" id="inputC_Comparacion" value="15">
+      </div>
+
+      <div class="form-group">
+        <label>D</label>
+        <input type="number" id="inputD_Comparacion" value="10">
+      </div>
+    </div>
+  </section>
+
+  <section class="grid-2">
+    <div class="panel">
+      <h2>Arquitectura RISC</h2>
+      <div class="code-box" id="codigoRiscComparacion"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Arquitectura CISC</h2>
+      <div class="code-box" id="codigoCiscComparacion"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Gráficos comparativos estructurales</h2>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>Número de instrucciones</h3>
+
+        <div class="bar-row">
+          <span>RISC</span>
+          <div class="bar-track">
+            <div class="bar-fill" id="barRiscInstr"></div>
+          </div>
+          <strong id="txtRiscInstr">0</strong>
+        </div>
+
+        <div class="bar-row">
+          <span>CISC</span>
+          <div class="bar-track">
+            <div class="bar-fill" id="barCiscInstr"></div>
+          </div>
+          <strong id="txtCiscInstr">0</strong>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Accesos memoria</h3>
+
+        <div class="bar-row">
+          <span>RISC</span>
+          <div class="bar-track">
+            <div class="bar-fill" id="barRiscMem"></div>
+          </div>
+          <strong id="txtRiscMem">0</strong>
+        </div>
+
+        <div class="bar-row">
+          <span>CISC</span>
+          <div class="bar-track">
+            <div class="bar-fill" id="barCiscMem"></div>
+          </div>
+          <strong id="txtCiscMem">0</strong>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Complejidad hardware</h3>
+
+        <div class="bar-row">
+          <span>RISC</span>
+          <div class="bar-track">
+            <div class="bar-fill" id="barRiscComp"></div>
+          </div>
+          <strong>Baja</strong>
+        </div>
+
+        <div class="bar-row">
+          <span>CISC</span>
+          <div class="bar-track">
+            <div class="bar-fill" id="barCiscComp"></div>
+          </div>
+          <strong>Alta</strong>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Compatibilidad Pipeline</h3>
+
+        <div class="bar-row">
+          <span>RISC</span>
+          <div class="bar-track">
+            <div class="bar-fill" id="barRiscPipe"></div>
+          </div>
+          <strong>Alta</strong>
+        </div>
+
+        <div class="bar-row">
+          <span>CISC</span>
+          <div class="bar-track">
+            <div class="bar-fill" id="barCiscPipe"></div>
+          </div>
+          <strong>Media</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Gráfico X-Y estructural: Instrucciones vs Memoria</h2>
+    <canvas id="graficoXYComparacion" width="700" height="360"></canvas>
+  </section>
+
+  <section class="panel">
+    <h2>Gráfico dinámico de ejecución</h2>
+    <p style="color:#94a3b8;margin-bottom:15px;">
+      Muestra cómo ambas arquitecturas llegan al resultado usando los valores ingresados.
+    </p>
+
+    <canvas id="graficoEjecucionComparacion" width="700" height="360"></canvas>
+  </section>
+
+  <section class="panel">
+    <h2>Ejecución paso a paso</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Paso</th>
+          <th>Operación</th>
+          <th>RISC</th>
+          <th>CISC</th>
+        </tr>
+      </thead>
+
+      <tbody id="tablaEjecucionComparacion"></tbody>
+    </table>
+  </section>
+
+  <section class="panel">
+    <h2>Tabla comparativa conceptual</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Criterio</th>
+          <th>RISC</th>
+          <th>CISC</th>
+        </tr>
+      </thead>
+
+      <tbody>
 
 <tr>
-
-<th>Criterio</th>
-<th>RISC</th>
-<th>CISC</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-<td>Formato instrucciones</td>
-<td>Fijo y simple</td>
-<td>Variable y complejo</td>
+    <td>Número de instrucciones</td>
+    <td id="tablaInstrRisc">9</td>
+    <td id="tablaInstrCisc">6</td>
 </tr>
 
 <tr>
-<td>Acceso memoria</td>
-<td>Solo LW/SW</td>
-<td>Registro-Memoria</td>
+    <td>Accesos a memoria</td>
+    <td id="tablaMemRisc">5</td>
+    <td id="tablaMemCisc">5</td>
 </tr>
 
 <tr>
-<td>Operaciones ALU</td>
-<td>Registro-Registro</td>
-<td>Registro-Memoria</td>
+    <td>Registros utilizados</td>
+    <td id="tablaRegRisc">8</td>
+    <td id="tablaRegCisc">2</td>
 </tr>
 
 <tr>
-<td>Código</td>
-<td>Más largo</td>
-<td>Más compacto</td>
+    <td>Operaciones ALU</td>
+    <td id="tablaAluRisc">3</td>
+    <td id="tablaAluCisc">3</td>
 </tr>
 
 <tr>
-<td>Pipeline</td>
-<td>Muy eficiente</td>
-<td>Moderado</td>
+    <td>Formato de instrucciones</td>
+    <td>Longitud fija (32 bits)</td>
+    <td>Longitud variable</td>
+</tr>
+
+<tr>
+    <td>Acceso a memoria</td>
+    <td>Load / Store</td>
+    <td>Registro - Memoria</td>
+</tr>
+
+<tr>
+    <td>Registros de propósito general</td>
+    <td>Mayor cantidad</td>
+    <td>Menor cantidad</td>
+</tr>
+
+<tr>
+    <td>Compatibilidad con Pipeline</td>
+    <td>Muy alta (95%)</td>
+    <td>Media (65%)</td>
+</tr>
+
+<tr>
+    <td>Complejidad del hardware</td>
+    <td>Baja (35%)</td>
+    <td>Alta (90%)</td>
+</tr>
+
+<tr>
+    <td>Código ensamblador</td>
+    <td>Más largo</td>
+    <td>Más compacto</td>
+</tr>
+
+<tr>
+    <td>Resultado obtenido</td>
+    <td id="tablaResultadoRisc">0</td>
+    <td id="tablaResultadoCisc">0</td>
+</tr>
+
+<tr>
+    <td>Ventaja principal</td>
+    <td>Mayor rendimiento en segmentación y paralelismo.</td>
+    <td>Menor número de instrucciones y mayor densidad de código.</td>
+</tr>
+
+<tr>
+    <td>Desventaja principal</td>
+    <td>Programa más largo.</td>
+    <td>Hardware más complejo y menor eficiencia en pipeline.</td>
 </tr>
 
 </tbody>
+    </table>
+  </section>
 
-</table>
+  <section class="panel">
+    <h2>Conclusión automática</h2>
 
-</section>
+    <div class="result-card">
+      <p>Resultado del análisis</p>
 
-<section class="panel">
+      <h3 id="conclusionComparacion">
+        Esperando comparación...
+      </h3>
 
-<h2>Conclusión automática</h2>
-
-<div class="result-card">
-
-<p>Resultado del análisis</p>
-
-<h3 id="conclusionComparacion">
-
-Esperando comparación...
-
-</h3>
-
-<strong id="resultadoComparacion">
-
-Ejecute el análisis.
-
-</strong>
-
-</div>
-
-</section>
+      <strong id="resultadoComparacion">
+        Ejecute el análisis.
+      </strong>
+    </div>
+  </section>
 
 </main>
 
@@ -402,5 +336,4 @@ Ejecute el análisis.
 <script src="../js/app.js"></script>
 
 </body>
-
 </html>
