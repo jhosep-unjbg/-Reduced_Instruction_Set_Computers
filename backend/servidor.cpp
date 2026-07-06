@@ -16,6 +16,9 @@
 #include "models/Comparacionpipeline.h"
 #include "services/Comparacionpipelineservice.h"
 #include "services/Archivoservice.h"
+#include "models/Comparacion.h"
+#include "services/Comparacionservice.h"
+
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -265,28 +268,60 @@ CROW_ROUTE(app, "/api/cisc").methods("POST"_method)
     agregarCors(res);
     return res;
 });
-CROW_ROUTE(app, "/api/comparacion-risc-cisc").methods("GET"_method)
-([]() {
+CROW_ROUTE(app, "/api/comparacion-risc-cisc").methods("POST"_method)
+([](const crow::request& req) {
+
+    auto body = crow::json::load(req.body);
+
+    if (!body) {
+        crow::response res(400, "{\"error\":\"JSON invalido\"}");
+        agregarCors(res);
+        return res;
+    }
+
+    int A = body["A"].i();
+    int B = body["B"].i();
+    int C = body["C"].i();
+    int D = body["D"].i();
+
+    Risc risc(A, B, C, D);
+    Cisc cisc(A, B, C, D);
+
+    RiscService riscService;
+    CiscService ciscService;
+
+    risc = riscService.calcular(risc);
+    cisc = ciscService.calcular(cisc);
+
+    int accesosMemoriaRisc = risc.getLoads() + risc.getStores();
+    int accesosMemoriaCisc = cisc.getAccesosMemoria();
+
     ArchivoService archivo;
     archivo.guardarHistorialGeneral(
         "Comparacion RISC-CISC",
-        "Modelo=RISC vs CISC",
-        "RISC instrucciones=9; CISC instrucciones=6; Resultado=100"
+        "A=" + std::to_string(A) +
+        "; B=" + std::to_string(B) +
+        "; C=" + std::to_string(C) +
+        "; D=" + std::to_string(D),
+        "RISC resultado=" + std::to_string(risc.getResultado()) +
+        "; CISC resultado=" + std::to_string(cisc.getResultado()) +
+        "; RISC instrucciones=" + std::to_string(risc.getNumeroInstrucciones()) +
+        "; CISC instrucciones=" + std::to_string(cisc.getNumeroInstrucciones())
     );
 
     crow::json::wvalue json;
 
-    json["risc"]["instrucciones"] = 9;
-    json["risc"]["memoria"] = 5;
+    json["risc"]["instrucciones"] = risc.getNumeroInstrucciones();
+    json["risc"]["memoria"] = accesosMemoriaRisc;
     json["risc"]["complejidad"] = 35;
     json["risc"]["pipeline"] = 95;
-    json["risc"]["resultado"] = 100;
+    json["risc"]["resultado"] = risc.getResultado();
 
-    json["cisc"]["instrucciones"] = 6;
-    json["cisc"]["memoria"] = 5;
+    json["cisc"]["instrucciones"] = cisc.getNumeroInstrucciones();
+    json["cisc"]["memoria"] = accesosMemoriaCisc;
     json["cisc"]["complejidad"] = 90;
     json["cisc"]["pipeline"] = 65;
-    json["cisc"]["resultado"] = 100;
+    json["cisc"]["resultado"] = cisc.getResultado();
 
     crow::response res(200, json);
     agregarCors(res);

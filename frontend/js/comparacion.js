@@ -1,35 +1,47 @@
+let comparacionInicializada = false;
+
 function inicializarComparacion() {
-  cargarModuloComparacion();
+  if (comparacionInicializada) return;
+  comparacionInicializada = true;
+
+  pintarCodigoComparacion();
 
   document
     .getElementById("btnAnalizarComparacion")
-    ?.addEventListener("click", cargarModuloComparacion);
+    ?.addEventListener("click", analizarComparacion);
 }
 
-async function cargarModuloComparacion() {
-  const datosBackend = await getData("/api/comparacion-risc-cisc");
+function obtenerDatosComparacion() {
+  return {
+    A: Number(document.getElementById("inputA_Comparacion").value),
+    B: Number(document.getElementById("inputB_Comparacion").value),
+    C: Number(document.getElementById("inputC_Comparacion").value),
+    D: Number(document.getElementById("inputD_Comparacion").value)
+  };
+}
 
-  if (datosBackend) {
-    pintarComparacion(datosBackend);
+async function analizarComparacion(event) {
+  event?.preventDefault();
+
+  const datos = obtenerDatosComparacion();
+
+  console.log("Datos enviados a comparación:", datos);
+
+  const respuesta = await postData("/api/comparacion-risc-cisc", datos);
+
+  console.log("Respuesta comparación:", respuesta);
+
+  if (!respuesta) {
+    alert("No se pudo conectar con el backend.");
     return;
   }
 
-  const risc = JSON.parse(localStorage.getItem("resultadoRisc"));
-  const cisc = JSON.parse(localStorage.getItem("resultadoCisc"));
-
-  if (!risc || !cisc) {
-    mostrarComparacionVacia();
-    return;
-  }
-
-  pintarComparacion({ risc, cisc });
+  pintarComparacion(respuesta);
 }
 
 function pintarComparacion(datos) {
   const risc = datos.risc;
   const cisc = datos.cisc;
-
-  pintarCodigoComparacion();
 
   document.getElementById("cmpInstr").textContent =
     `${risc.instrucciones} vs ${cisc.instrucciones}`;
@@ -37,11 +49,8 @@ function pintarComparacion(datos) {
   document.getElementById("cmpMem").textContent =
     `${risc.memoria} vs ${cisc.memoria}`;
 
-  document.getElementById("cmpPipe").textContent =
-    risc.pipeline >= cisc.pipeline ? "RISC" : "CISC";
-
-  document.getElementById("cmpCodigo").textContent =
-    risc.instrucciones < cisc.instrucciones ? "RISC" : "CISC";
+  document.getElementById("cmpPipe").textContent = "RISC";
+  document.getElementById("cmpCodigo").textContent = "CISC";
 
   document.getElementById("txtRiscInstr").textContent = risc.instrucciones;
   document.getElementById("txtCiscInstr").textContent = cisc.instrucciones;
@@ -70,9 +79,15 @@ function pintarComparacion(datos) {
   document.getElementById("barRiscPipe").style.width = `${risc.pipeline}%`;
   document.getElementById("barCiscPipe").style.width = `${cisc.pipeline}%`;
 
+  document.getElementById("conclusionComparacion").textContent =
+    Number(risc.resultado) === Number(cisc.resultado)
+      ? "Ambas arquitecturas producen el mismo resultado."
+      : "Los resultados no coinciden.";
+
+  document.getElementById("resultadoComparacion").textContent =
+    `Resultado con los datos ingresados: ${risc.resultado}`;
   dibujarGraficoXY(risc, cisc);
-  generarConclusionComparacion(risc, cisc);
-}
+  }
 
 function pintarCodigoComparacion() {
   document.getElementById("codigoRiscComparacion").innerHTML = `
@@ -96,26 +111,22 @@ function pintarCodigoComparacion() {
     <div>MOV [0x110], AX</div>
   `;
 }
-
 function dibujarGraficoXY(risc, cisc) {
   const canvas = document.getElementById("graficoXYComparacion");
   if (!canvas) return;
 
   const ctx = canvas.getContext("2d");
-
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   const padding = 55;
   const maxX = Math.max(risc.instrucciones, cisc.instrucciones, 1) + 2;
   const maxY = Math.max(risc.memoria, cisc.memoria, 1) + 2;
 
-  function escalarX(x) {
-    return padding + (x / maxX) * (canvas.width - padding * 2);
-  }
+  const escalarX = x =>
+    padding + (x / maxX) * (canvas.width - padding * 2);
 
-  function escalarY(y) {
-    return canvas.height - padding - (y / maxY) * (canvas.height - padding * 2);
-  }
+  const escalarY = y =>
+    canvas.height - padding - (y / maxY) * (canvas.height - padding * 2);
 
   ctx.strokeStyle = "#334155";
   ctx.lineWidth = 2;
@@ -130,25 +141,6 @@ function dibujarGraficoXY(risc, cisc) {
   ctx.font = "13px Segoe UI";
   ctx.fillText("Accesos memoria", 15, 30);
   ctx.fillText("Instrucciones", canvas.width - 145, canvas.height - 18);
-
-  ctx.strokeStyle = "#1e293b";
-  ctx.lineWidth = 1;
-
-  for (let i = 1; i <= maxX; i++) {
-    const x = escalarX(i);
-    ctx.beginPath();
-    ctx.moveTo(x, padding);
-    ctx.lineTo(x, canvas.height - padding);
-    ctx.stroke();
-  }
-
-  for (let i = 1; i <= maxY; i++) {
-    const y = escalarY(i);
-    ctx.beginPath();
-    ctx.moveTo(padding, y);
-    ctx.lineTo(canvas.width - padding, y);
-    ctx.stroke();
-  }
 
   function punto(nombre, x, y, color) {
     const px = escalarX(x);
@@ -170,30 +162,4 @@ function dibujarGraficoXY(risc, cisc) {
 
   punto("RISC", risc.instrucciones, risc.memoria, "#38bdf8");
   punto("CISC", cisc.instrucciones, cisc.memoria, "#22c55e");
-}
-
-function generarConclusionComparacion(risc, cisc) {
-  const mismoResultado = risc.resultado === cisc.resultado;
-
-  document.getElementById("conclusionComparacion").textContent =
-    mismoResultado
-      ? "Ambas arquitecturas producen el mismo resultado."
-      : "Las arquitecturas producen resultados diferentes.";
-
-  const reduccion = (
-    ((risc.instrucciones - cisc.instrucciones) / risc.instrucciones) * 100
-  ).toFixed(1);
-
-  document.getElementById("resultadoComparacion").textContent =
-    `CISC reduce el código en ${reduccion}%, mientras RISC favorece mejor el pipeline. Resultado: ${risc.resultado}`;
-}
-
-function mostrarComparacionVacia() {
-  pintarCodigoComparacion();
-
-  document.getElementById("conclusionComparacion").textContent =
-    "Primero ejecuta los módulos RISC y CISC.";
-
-  document.getElementById("resultadoComparacion").textContent =
-    "No hay datos suficientes para comparar.";
 }
