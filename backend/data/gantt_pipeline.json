@@ -1,0 +1,12 @@
+{
+   "gantt" : [
+      {
+         "instruccion" : "1",
+         "ciclos" : ["IF","ID","EX","MEM","WB"]
+      },
+      {
+         "instruccion" : "2",
+         "ciclos" : ["-","IF","ID","EX","MEM","WB"]
+      }
+   ]
+}

@@ -129,7 +129,8 @@ function pintarComparacion(datos, entrada) {
     `CISC requiere ${diferenciaComplejidad}% más complejidad de hardware.`;
 
   dibujarGraficoXY(risc, cisc);
-  pintarEjecucionDinamica(entrada);
+dibujarGraficoTiempoEjecucion(risc, cisc);
+pintarEjecucionDinamica(entrada);
 }
 
 function pintarCodigoComparacion() {
@@ -310,4 +311,151 @@ function dibujarLinea(ctx, puntos, color, nombre) {
   ctx.fillStyle = color;
   ctx.font = "14px Segoe UI";
   ctx.fillText(nombre, ultimo.x + 12, ultimo.y + 5);
+}
+function dibujarGraficoTiempoEjecucion(risc, cisc) {
+
+    const canvas = document.getElementById("graficoTiempoComparacion");
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    const padding = 70;
+
+    const ciclosRisc = risc.ciclos ?? 9;
+    const ciclosCisc = cisc.ciclos ?? 13;
+
+    const maxCiclos = Math.max(ciclosRisc,ciclosCisc);
+
+    function X(c){
+
+        return padding +
+        (c/maxCiclos)*
+        (canvas.width-padding*2);
+
+    }
+
+    function Y(p){
+
+        return canvas.height-padding-
+        (p/100)*
+        (canvas.height-padding*2);
+
+    }
+
+    /* Ejes */
+
+    ctx.strokeStyle="#334155";
+    ctx.lineWidth=2;
+
+    ctx.beginPath();
+    ctx.moveTo(padding,padding);
+    ctx.lineTo(padding,canvas.height-padding);
+    ctx.lineTo(canvas.width-padding,canvas.height-padding);
+    ctx.stroke();
+
+    /* Cuadrícula */
+
+    ctx.strokeStyle="#475569";
+    ctx.lineWidth=1;
+
+    for(let i=0;i<=10;i++){
+
+        let y=padding+i*(canvas.height-padding*2)/10;
+
+        ctx.beginPath();
+        ctx.moveTo(padding,y);
+        ctx.lineTo(canvas.width-padding,y);
+        ctx.stroke();
+
+    }
+
+    for(let i=0;i<=maxCiclos;i++){
+
+        let x=X(i);
+
+        ctx.beginPath();
+        ctx.moveTo(x,padding);
+        ctx.lineTo(x,canvas.height-padding);
+        ctx.stroke();
+
+    }
+
+    ctx.fillStyle="#94a3b8";
+    ctx.font="13px Segoe UI";
+
+    ctx.fillText("Progreso (%)",15,30);
+    ctx.fillText("Ciclos",canvas.width-80,canvas.height-20);
+
+    dibujarLineaProgreso(ctx,ciclosRisc,"#38bdf8","RISC",X,Y);
+    dibujarLineaProgreso(ctx,ciclosCisc,"#22c55e","CISC",X,Y);
+
+    ctx.fillStyle="#ffffff";
+    ctx.font="15px Segoe UI";
+
+    ctx.fillText(
+        "RISC termina en "+ciclosRisc+" ciclos",
+        padding,
+        canvas.height-15
+    );
+
+    ctx.fillText(
+        "CISC termina en "+ciclosCisc+" ciclos",
+        padding+280,
+        canvas.height-15
+    );
+
+}
+function dibujarLineaProgreso(ctx, ciclos, color, nombre, X, Y) {
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 4;
+
+    ctx.beginPath();
+
+    for (let c = 0; c <= ciclos; c++) {
+
+        let progreso;
+
+        if (nombre === "RISC") {
+            progreso = Math.pow(c / ciclos, 0.85) * 100;
+        } else {
+            progreso = Math.pow(c / ciclos, 1.40) * 100;
+        }
+
+        const x = X(c);
+        const y = Y(progreso);
+
+        if (c === 0)
+            ctx.moveTo(x, y);
+        else
+            ctx.lineTo(x, y);
+    }
+
+    ctx.stroke();
+
+    for (let c = 0; c <= ciclos; c++) {
+
+        let progreso;
+
+        if (nombre === "RISC") {
+            progreso = Math.pow(c / ciclos, 0.85) * 100;
+        } else {
+            progreso = Math.pow(c / ciclos, 1.40) * 100;
+        }
+
+        const x = X(c);
+        const y = Y(progreso);
+
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+
+        if (c === ciclos) {
+            ctx.fillStyle = color;
+            ctx.font = "15px Segoe UI";
+            ctx.fillText(nombre, x + 10, y - 10);
+        }
+    }
 }
