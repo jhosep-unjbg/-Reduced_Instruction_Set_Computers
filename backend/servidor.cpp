@@ -311,17 +311,36 @@ CROW_ROUTE(app, "/api/comparacion-risc-cisc").methods("POST"_method)
 
     crow::json::wvalue json;
 
-    json["risc"]["instrucciones"] = risc.getNumeroInstrucciones();
-    json["risc"]["memoria"] = accesosMemoriaRisc;
-    json["risc"]["complejidad"] = 35;
-    json["risc"]["pipeline"] = 95;
-    json["risc"]["resultado"] = risc.getResultado();
+    double tcRisc = 2.0;   // ns
+double tcCisc = 6.0;   // ns
 
-    json["cisc"]["instrucciones"] = cisc.getNumeroInstrucciones();
-    json["cisc"]["memoria"] = accesosMemoriaCisc;
-    json["cisc"]["complejidad"] = 90;
-    json["cisc"]["pipeline"] = 65;
-    json["cisc"]["resultado"] = cisc.getResultado();
+int ciclosRisc = risc.getNumeroInstrucciones() * 5;
+int ciclosCisc = cisc.getNumeroInstrucciones() * 3;
+
+double tiempoRisc = ciclosRisc * tcRisc;
+double tiempoCisc = ciclosCisc * tcCisc;
+
+json["risc"]["instrucciones"] = risc.getNumeroInstrucciones();
+json["risc"]["memoria"] = accesosMemoriaRisc;
+json["risc"]["registros"] = 8;
+json["risc"]["alu"] = risc.getOperacionesAlu();
+json["risc"]["complejidad"] = 35;
+json["risc"]["pipeline"] = 95;
+json["risc"]["resultado"] = risc.getResultado();
+json["risc"]["ciclos"] = ciclosRisc;
+json["risc"]["tiempo"] = tiempoRisc;
+json["risc"]["tc"] = tcRisc;
+
+json["cisc"]["instrucciones"] = cisc.getNumeroInstrucciones();
+json["cisc"]["memoria"] = accesosMemoriaCisc;
+json["cisc"]["registros"] = 2;
+json["cisc"]["alu"] = cisc.getOperacionesAlu();
+json["cisc"]["complejidad"] = 90;
+json["cisc"]["pipeline"] = 65;
+json["cisc"]["resultado"] = cisc.getResultado();
+json["cisc"]["ciclos"] = ciclosCisc;
+json["cisc"]["tiempo"] = tiempoCisc;
+json["cisc"]["tc"] = tcCisc;
 
     crow::response res(200, json);
     agregarCors(res);

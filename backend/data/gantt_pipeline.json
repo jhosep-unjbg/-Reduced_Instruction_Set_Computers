@@ -1,12 +1,52 @@
 {
    "gantt" : [
       {
-         "instruccion" : "1",
+         "instruccion" : "12",
          "ciclos" : ["IF","ID","EX","MEM","WB"]
       },
       {
-         "instruccion" : "2",
+         "instruccion" : "1",
          "ciclos" : ["-","IF","ID","EX","MEM","WB"]
+      },
+      {
+         "instruccion" : "2",
+         "ciclos" : ["-","-","IF","ID","EX","MEM","WB"]
+      },
+      {
+         "instruccion" : "12",
+         "ciclos" : ["-","-","-","IF","ID","EX","MEM","WB"]
+      },
+      {
+         "instruccion" : "1",
+         "ciclos" : ["-","-","-","-","IF","ID","EX","MEM","WB"]
+      },
+      {
+         "instruccion" : "2",
+         "ciclos" : ["-","-","-","-","-","IF","ID","EX","MEM","WB"]
+      },
+      {
+         "instruccion" : "1",
+         "ciclos" : ["-","-","-","-","-","-","IF","ID","EX","MEM","WB"]
+      },
+      {
+         "instruccion" : "1",
+         "ciclos" : ["-","-","-","-","-","-","-","IF","ID","EX","MEM","WB"]
+      },
+      {
+         "instruccion" : "22",
+         "ciclos" : ["-","-","-","-","-","-","-","-","IF","ID","EX","MEM","WB"]
+      },
+      {
+         "instruccion" : "14",
+         "ciclos" : ["-","-","-","-","-","-","-","-","-","IF","ID","EX","MEM","WB"]
+      },
+      {
+         "instruccion" : "21",
+         "ciclos" : ["-","-","-","-","-","-","-","-","-","-","IF","ID","EX","MEM","WB"]
+      },
+      {
+         "instruccion" : "|1",
+         "ciclos" : ["-","-","-","-","-","-","-","-","-","-","-","IF","ID","EX","MEM","WB"]
       }
    ]
 }

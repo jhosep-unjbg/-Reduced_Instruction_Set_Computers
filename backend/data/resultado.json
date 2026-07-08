@@ -1,7 +1,7 @@
 {
   "modulo": "Pipeline Gantt",
-  "instrucciones": 2,
-  "ciclos": 6,
+  "instrucciones": 12,
+  "ciclos": 16,
   "stalls": 0,
   "forwarding": 0,
   "flush": 0
